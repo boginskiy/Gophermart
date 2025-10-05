@@ -3,14 +3,16 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/boginskiy/Gophermart/internal/service"
 	"github.com/go-chi/chi"
 )
 
 type AuthHandlers struct {
+	UserSrvcer service.UserSrvcer
 }
 
-func NewAuthHandlers() *AuthHandlers {
-	return &AuthHandlers{}
+func NewAuthHandlers(userSrv service.UserSrvcer) *AuthHandlers {
+	return &AuthHandlers{UserSrvcer: userSrv}
 }
 
 func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
@@ -19,6 +21,8 @@ func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
 }
 
 func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
+	dataByte, err := ah.UserSrvcer.Registration(r)
+
 	w.Write([]byte("RegisterUser"))
 }
 
