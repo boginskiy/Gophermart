@@ -2,16 +2,23 @@ package server
 
 import (
 	"github.com/boginskiy/Gophermart/internal/handlers"
+	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/service"
 )
 
 // Params need
+// Хеширование пароля
 // SALT_KEY_LEN >> saltLen
 // HASH_KEY_LEN >> keyLen
 
+// Logger
+//
+
 func Start() {
-	// // Инициализация main-журнала логирования
-	// loggMain := NewLogg()
+	// Инициализация main-журнала логирования
+	AppLog := logg.NewLogg("appLog")
+	// BusinessLog := logg.NewLogg("businessLog")
+	// InfraLog := logg.NewLogg("infraLog")
 
 	// // Инициализация  аргументов
 	// args.NewArgs()
@@ -29,6 +36,6 @@ func Start() {
 	router := NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs)
 
 	// Пуск сервера (args, loggMain)
-	NewServer(":8080", "loggMain").Run(router)
+	NewServer(":8080", AppLog).Run(router)
 
 }

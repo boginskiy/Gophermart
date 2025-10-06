@@ -22,8 +22,11 @@ func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
 
 func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	dataByte, err := ah.UserSrvcer.Registration(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 
-	w.Write([]byte("RegisterUser"))
+	w.Write([]byte(dataByte))
 }
 
 func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {

@@ -48,7 +48,7 @@ func (u *UserSrv) Registration(req *http.Request) ([]byte, error) {
 	}
 
 	// Записываем в БД TODO!
-	u.Repo.InsertRecord(user)
+	// u.Repo.InsertRecord(user)
 
 	userByte, err := json.Marshal(user)
 	if err != nil {
