@@ -1,9 +1,13 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/boginskiy/Gophermart/internal/middleware"
+)
 
 type Router interface {
-	Run() http.Handler
+	Run(middleware.Mdlwarer) http.Handler
 }
 
 type Server interface {

@@ -7,6 +7,8 @@ toolchain go1.24.7
 require (
 	github.com/aileron-projects/go v0.0.0-alpha.16
 	github.com/go-chi/chi v1.5.5
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-jwt/jwt/v4 v4.5.2
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.38.0
 )

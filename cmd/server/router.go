@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/boginskiy/Gophermart/internal/handlers"
+	"github.com/boginskiy/Gophermart/internal/middleware"
 	"github.com/go-chi/chi"
 )
 
@@ -25,9 +26,9 @@ func NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs handlers.Hdl
 	}
 }
 
-func (r *Route) Run() http.Handler {
+func (r *Route) Run(mv middleware.Mdlwarer) http.Handler {
 	// TODO! аутентификация, потом логгирование и обработка ошибок
-	r.R.Use()
+	// r.R.Use(mv.WithAuth())
 
 	r.R.Route("/api/user/", func(route chi.Router) {
 		r.AuthHandlers.RegisterRoutes(route)        // Авторизация

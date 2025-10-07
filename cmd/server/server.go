@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/boginskiy/Gophermart/internal/logg"
+	"github.com/boginskiy/Gophermart/internal/middleware"
 )
 
 type Serv struct {
@@ -18,8 +19,8 @@ func NewServer(args string, logger logg.Logger) *Serv {
 	}
 }
 
-func (s *Serv) Run(router Router) {
+func (s *Serv) Run(router Router, mv middleware.Mdlwarer) {
 	s.Logger.RaiseFatal(
 		"server is not running",
-		http.ListenAndServe(`:8080`, router.Run()))
+		http.ListenAndServe(`:8080`, router.Run(mv)))
 }

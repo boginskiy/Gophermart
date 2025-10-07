@@ -14,7 +14,7 @@ type User struct {
 	UpdatedAt   time.Time `json:"-"`          // Последнее обновление профиля
 	LastLoginAt time.Time `json:"-"`          // Время последнего входа
 	IsActive    bool      `json:"-"`          // Флаг активности пользователя (заблокирован или активен)
-	Roles       []string  `json:"-"`          // Роли пользователя (администратор, модератор, обычный пользователь)
+	Role        string    `json:"-"`          // Роли пользователя (администратор, модератор, обычный пользователь)
 }
 
 func NewUser(login, password string) (*User, error) {
@@ -31,6 +31,6 @@ func NewUser(login, password string) (*User, error) {
 		UpdatedAt:   time.Now().UTC(),
 		LastLoginAt: time.Now().UTC(),
 		IsActive:    true,
-		Roles:       []string{"user"},
+		Role:        "user",
 	}, nil
 }

@@ -1,5 +1,10 @@
 # Gophermart
 
+### TODO
+- реализовать свою подпись по типу JWToken
+
+
+### End Point
 // Auth
 // POST /api/user/register — регистрация пользователя;
 // POST /api/user/login — аутентификация пользователя;

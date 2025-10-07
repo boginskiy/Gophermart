@@ -3,16 +3,16 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/boginskiy/Gophermart/internal/service"
+	"github.com/boginskiy/Gophermart/internal/auth"
 	"github.com/go-chi/chi"
 )
 
 type AuthHandlers struct {
-	UserSrvcer service.UserSrvcer
+	Auther auth.Auther
 }
 
-func NewAuthHandlers(userSrv service.UserSrvcer) *AuthHandlers {
-	return &AuthHandlers{UserSrvcer: userSrv}
+func NewAuthHandlers(auther auth.Auther) *AuthHandlers {
+	return &AuthHandlers{Auther: auther}
 }
 
 func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
@@ -21,12 +21,34 @@ func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
 }
 
 func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
-	dataByte, err := ah.UserSrvcer.Registration(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	dataByte, cookie, err := ah.Auther.Registration(r)
+
+	// Регистрационные данные некорректные
+	if err == auth.ErrLoginPasswordIsBad {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
-	w.Write([]byte(dataByte))
+	// Введенный логин занят другим пользователем
+	if err == auth.ErrLoginNotUnic {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	// Ошибка создания нового пользователя
+	if err == auth.ErrCreateUser {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, cookie)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(dataByte)
 }
 
 func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
