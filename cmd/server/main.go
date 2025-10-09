@@ -14,9 +14,6 @@ import (
 // SALT_KEY_LEN >> saltLen
 // HASH_KEY_LEN >> keyLen
 
-// Logger
-// названия файлов логирования
-
 // JWT
 //  token.SignedString([]byte("SecretKey")) - секретный ключ
 //  ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Second)) - время жизни токена
@@ -26,20 +23,20 @@ import (
 // Name:     name, - имя кук
 
 func Start() {
-	// Инициализация main-журнала логирования
-	// businessLog := logg.NewLogg("businessLog")
-	infraLog := logg.NewLogg("infraLog")
-	appLog := logg.NewLogg("appLog")
 
-	// Инициализация  аргументов
+	// Args & Logger
+	appLog := logg.NewLogg("appLog")
 	args := config.NewArgs()
+
+	businessLog := logg.NewLogg(args.GetBusinessLog())
+	infraLog := logg.NewLogg(args.GetInfraLog())
 
 	// Repository
 	repo := repository.NewRepos(args, infraLog)
 
 	// Authentification
-	ahCore := auth.NewAhCore(args, appLog)
 	JWTServ := auth.NewJWTServ(args, appLog)
+	ahCore := auth.NewAhCore(args, appLog)
 	auth := auth.NewAuth(ahCore, JWTServ, repo)
 
 	// Services
@@ -52,12 +49,16 @@ func Start() {
 	authHdlrs := handlers.NewAuthHandlers(auth)
 
 	// Middleware
-	mdlWare := middleware.NewMiddleware(appLog, auth)
+	mdlWare := middleware.NewMiddleware(args, appLog, auth)
 
 	// Router
 	router := NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs)
 
-	// Пуск сервера (args, loggMain)
-	NewServer(":8080", appLog).Run(router, mdlWare)
+	// Start server
+	NewServer(args.GetHost(), appLog).Run(router, mdlWare)
 
+	// Clouse somethings
+	defer businessLog.Clouse()
+	defer infraLog.Clouse()
+	defer appLog.Clouse()
 }

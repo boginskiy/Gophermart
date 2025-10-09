@@ -1,9 +1,14 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
+	"github.com/boginskiy/Gophermart/models"
 )
+
+var Store map[string]*models.User
 
 type Repo struct {
 	Args config.Argser
@@ -22,11 +27,19 @@ func (r *Repo) CheckUnicRecord(record any) bool {
 }
 
 func (r *Repo) InsertRecord(record any) error {
+	user := record.(*models.User)
+	Store[user.Login] = user
 	return nil
 }
 
-// CheckUnicRecord(any) error
-// 	InsertRecord(any) error
-// 	SelectRecord(any) error
+func (r *Repo) SelectRecord(item any) (record any, err error) {
+	login := item.(string)
+	user, ok := Store[login]
+	if !ok {
+		return nil, errors.New("user bad")
+	}
+	return user, nil
+}
+
 // 	DeleteRecord(any) error
 // 	UpdateRecord(any) error

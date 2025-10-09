@@ -1,5 +1,15 @@
 package config
 
+import "time"
+
 type Argser interface {
-	GetSomeParam() any
+	GetNameCookie() string
+	GetTimeLiveCookie() int
+	GetTimeLiveToken() time.Duration
+	GetSecretToken() []byte
+	GetHost() string
+
+	// Logger
+	GetBusinessLog() string
+	GetInfraLog() string
 }

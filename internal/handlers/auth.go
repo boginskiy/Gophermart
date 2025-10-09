@@ -23,7 +23,7 @@ func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
 func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	dataByte, cookie, err := ah.Auther.Registration(r)
 
-	// Регистрационные данные некорректные
+	// Логин, пароль введены некорректно
 	if err == auth.ErrLoginPasswordIsBad {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -39,7 +39,7 @@ func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Ошибка создания нового пользователя
+	// Все ошибки создания нового пользователя
 	if err == auth.ErrCreateUser {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -52,5 +52,33 @@ func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("LoginUser"))
+	dataByte, cookie, err := ah.Auther.Authentication(r)
+
+	// Логин, пароль введены некорректно
+	if err == auth.ErrLoginPasswordIsBad {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	// Логин не найден среди зарегистрированных пользователей || Невалидный пароль
+	if err == auth.ErrLogindNotFound || err == auth.ErrPasswordNotValid {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	// Все ошибки создания нового пользователя
+	if err == auth.ErrCreateUser {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//
+	http.SetCookie(w, cookie)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(dataByte)
 }
