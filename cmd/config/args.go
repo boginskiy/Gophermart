@@ -9,20 +9,23 @@ func NewArgs() *Args {
 	return &Args{}
 }
 
+// Host
 func (a *Args) GetHost() string {
 	return ":8080"
 }
 
+// Cookie
 func (a *Args) GetNameCookie() string {
-	return "Cookie"
+	return "auth_cookie"
 }
 
 func (a *Args) GetTimeLiveCookie() int {
 	return 300
 }
 
+// Token
 func (a *Args) GetTimeLiveToken() time.Duration {
-	return (20 * time.Second)
+	return (30 * time.Second)
 }
 
 func (a *Args) GetSecretToken() []byte {

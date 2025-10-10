@@ -19,7 +19,7 @@ func NewAhCore(argser config.Argser, logger logg.Logger) *AhCore {
 	return &AhCore{Args: argser, Logg: logger}
 }
 
-func (c *AhCore) CreateCookie(token, name string) *http.Cookie {
+func (c *AhCore) createCookie(token, name string) *http.Cookie {
 	return &http.Cookie{
 		Name:     name,
 		Value:    token,
@@ -34,14 +34,15 @@ func (c *AhCore) CreateCookie(token, name string) *http.Cookie {
 func (c *AhCore) takeLoginAndPassword(req *http.Request) (login, password string, err error) {
 	// Читаем body req
 	dataByte, err := io.ReadAll(req.Body)
+
 	defer req.Body.Close()
 	if err != nil {
 		c.Logg.RaiseError("AhCore>takeLoginAndPassword>ReadAll", err)
-		return "", "", ErrLoginPasswordIsBad
+		return "", "", err
 	}
 
 	// Парсинг данных
-	overallStruct := make(map[string]any, 2)
+	var overallStruct = make(map[string]any)
 	err = json.Unmarshal(dataByte, &overallStruct)
 	if err != nil {
 		c.Logg.RaiseError("AhCore>takeLoginAndPassword>Unmarshal", err)
@@ -59,8 +60,6 @@ func (c *AhCore) takeLoginAndPassword(req *http.Request) (login, password string
 	return "", "", ErrLoginPasswordIsBad
 }
 
-// var CtxLogin = CtxKey{}
-// var CtxRole = CtxKey{}
 func (c *AhCore) takeParamFromCtx(req *http.Request, p CtxKey) string {
 	param, ok := req.Context().Value(p).(string)
 	if !ok {

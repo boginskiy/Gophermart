@@ -27,14 +27,19 @@ func NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs handlers.Hdl
 }
 
 func (r *Route) Run(mv middleware.Mdlwarer) http.Handler {
-	// TODO! аутентификация, потом логгирование и обработка ошибок
-	// r.R.Use(mv.WithAuth())
+	// Global Middleware
+	r.R.Use(mv.WithAuth)
 
-	r.R.Route("/api/user/", func(route chi.Router) {
-		r.AuthHandlers.RegisterRoutes(route)        // Авторизация
-		r.OrdersHandlers.RegisterRoutes(route)      // Заказы
-		r.BalanceHandlers.RegisterRoutes(route)     // Баланс
-		r.WithdrawalsHandlers.RegisterRoutes(route) // Выводы средств
+	r.R.Route("/", func(route chi.Router) {
+
+		// ApiUser
+		r.R.Route("/api/user/", func(route chi.Router) {
+			r.AuthHandlers.RegisterRoutes(route)        // Авторизация
+			r.OrdersHandlers.RegisterRoutes(route)      // Заказы
+			r.BalanceHandlers.RegisterRoutes(route)     // Баланс
+			r.WithdrawalsHandlers.RegisterRoutes(route) // Выводы средств
+		})
+
 	})
 
 	return r.R

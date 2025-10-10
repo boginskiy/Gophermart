@@ -4,15 +4,17 @@ import (
 	"net/http"
 
 	"github.com/boginskiy/Gophermart/internal/auth"
+	"github.com/boginskiy/Gophermart/internal/prepar"
 	"github.com/go-chi/chi"
 )
 
 type AuthHandlers struct {
-	Auther auth.Auther
+	Auther  auth.Auther
+	ResPrep prepar.ResPreper
 }
 
-func NewAuthHandlers(auther auth.Auther) *AuthHandlers {
-	return &AuthHandlers{Auther: auther}
+func NewAuthHandlers(auther auth.Auther, resPreper prepar.ResPreper) *AuthHandlers {
+	return &AuthHandlers{Auther: auther, ResPrep: resPreper}
 }
 
 func (ah *AuthHandlers) RegisterRoutes(r chi.Router) {
@@ -25,17 +27,13 @@ func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	// Логин, пароль введены некорректно
 	if err == auth.ErrLoginPasswordIsBad {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusBadRequest, err)
 		return
 	}
 
 	// Введенный логин занят другим пользователем
 	if err == auth.ErrLoginNotUnic {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusConflict)
-		w.Write([]byte(err.Error()))
+		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusConflict, err)
 		return
 	}
 
@@ -45,28 +43,21 @@ func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, cookie)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(dataByte)
+	ah.ResPrep.OkWithJsonAndCookie(w, dataByte, cookie)
 }
 
 func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
 	dataByte, cookie, err := ah.Auther.Authentication(r)
 
 	// Логин, пароль введены некорректно
-	if err == auth.ErrLoginPasswordIsBad {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+	if err == auth.ErrLoginPasswordIsBad || err == auth.ErrLoginPasswordIsBad2 {
+		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusBadRequest, err)
 		return
 	}
 
 	// Логин не найден среди зарегистрированных пользователей || Невалидный пароль
 	if err == auth.ErrLogindNotFound || err == auth.ErrPasswordNotValid {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(err.Error()))
+		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusUnauthorized, err)
 		return
 	}
 
@@ -76,9 +67,5 @@ func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//
-	http.SetCookie(w, cookie)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(dataByte)
+	ah.ResPrep.OkWithJsonAndCookie(w, dataByte, cookie)
 }

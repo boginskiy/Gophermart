@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/boginskiy/Gophermart/internal/repository"
 	"github.com/boginskiy/Gophermart/models"
@@ -27,17 +28,22 @@ func (u *Auth) CheckToken(token string) (login, role string, err error) {
 	return u.JWTServ.CheckOfValidToken(token)
 }
 
-func (u *Auth) GetCredentials(req *http.Request) (login, password string, err error) {
-	// TODO!
-	// Остановка тут >>
-	// Как можно быстрее определеитьчто массив байт содержит необходимые данные
+func (u *Auth) CheckAuthReq(req *http.Request) bool {
+	url := req.URL.String()
+	foundR := strings.Contains(url, "register")
+	if !foundR {
+		foundL := strings.Contains(url, "login")
+		return foundL
+
+	}
+	return foundR
 }
 
 func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	// Достаем login, password
 	login, password, err := u.Core.takeLoginAndPassword(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, ErrLoginPasswordIsBad
 	}
 
 	// Проверка уникальности login
@@ -69,7 +75,7 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Создаем Cookie
-	cookie := u.Core.CreateCookie(token, u.Core.Args.GetNameCookie())
+	cookie := u.Core.createCookie(token, u.Core.Args.GetNameCookie())
 
 	// Формируем ответ
 	userByte, err := json.Marshal(newUser)
@@ -85,7 +91,7 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 	// Достаем login, password
 	login, password, err := u.Core.takeLoginAndPassword(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, ErrLoginPasswordIsBad2
 	}
 
 	// Идем в БД
@@ -98,15 +104,8 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 
 	user, _ := recore.(*models.User)
 
-	// Сверка паролей входящего и пароля из БД
-	inputPassword, err := pkg.GenerateHash(password)
-	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Authentication>GenerateHash", err)
-		return nil, nil, err
-	}
-
-	// Пароль не прошел сверку с предыдущим паролем
-	if !pkg.CompareHashAndPassword(user.Password, inputPassword) {
+	// Сверка паролей
+	if !pkg.CompareHashAndPassword(user.Password, password) {
 		return nil, nil, ErrPasswordNotValid
 	}
 
@@ -117,5 +116,5 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 		return nil, nil, err
 	}
 
-	return MessWelcome, u.Core.CreateCookie(token, u.Core.Args.GetNameCookie()), nil
+	return MessWelcome, u.Core.createCookie(token, u.Core.Args.GetNameCookie()), nil
 }

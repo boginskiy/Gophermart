@@ -8,7 +8,7 @@ import (
 	"github.com/boginskiy/Gophermart/models"
 )
 
-var Store map[string]*models.User
+var Store = map[string]*models.User{}
 
 type Repo struct {
 	Args config.Argser
@@ -23,7 +23,9 @@ func NewRepos(argser config.Argser, logger logg.Logger) *Repo {
 }
 
 func (r *Repo) CheckUnicRecord(record any) bool {
-	return true
+	login, _ := record.(string)
+	_, ok := Store[login]
+	return !ok
 }
 
 func (r *Repo) InsertRecord(record any) error {

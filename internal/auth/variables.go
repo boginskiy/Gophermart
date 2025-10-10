@@ -4,11 +4,12 @@ import "errors"
 
 // Errors
 var (
-	ErrLoginPasswordIsBad = errors.New(`{"error": "incorrect registration data"}`)
-	ErrLogindNotFound     = errors.New(`{"error": "login was not found"}`)
-	ErrPasswordNotValid   = errors.New(`{"error": "password is not valid"}`)
-	ErrLoginNotUnic       = errors.New(`{"error": "login is not unic"}`)
-	ErrCreateUser         = errors.New(`{"error": "user has not been created"}`)
+	ErrLoginPasswordIsBad  = errors.New(`{"error": "incorrect data for registration"}`)
+	ErrLoginPasswordIsBad2 = errors.New(`{"error": "incorrect data for authorization"}`)
+	ErrLogindNotFound      = errors.New(`{"error": "login was not found"}`)
+	ErrPasswordNotValid    = errors.New(`{"error": "password is not valid"}`)
+	ErrLoginNotUnic        = errors.New(`{"error": "login is not unic, try again"}`)
+	ErrCreateUser          = errors.New(`{"error": "user has not been created"}`)
 
 	ErrTokenNotValid = errors.New(`{"error": "token not valid"}`)
 	ErrTokenIsBad    = errors.New(`{"error": "token is bad"}`)

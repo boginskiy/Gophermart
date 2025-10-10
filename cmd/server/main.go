@@ -6,6 +6,7 @@ import (
 	"github.com/boginskiy/Gophermart/internal/handlers"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/middleware"
+	"github.com/boginskiy/Gophermart/internal/prepar"
 	"github.com/boginskiy/Gophermart/internal/repository"
 )
 
@@ -42,14 +43,17 @@ func Start() {
 	// Services
 	// userSrv := service.NewUserSrv(repo, businessLog)
 
+	// Preparation Response
+	resPrep := prepar.NewResPrep()
+
 	// Handlers
 	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers()
 	balanceHdlrs := handlers.NewBalanceHandlers()
 	orderHdlrs := handlers.NewOrdersHandlers()
-	authHdlrs := handlers.NewAuthHandlers(auth)
+	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)
 
 	// Middleware
-	mdlWare := middleware.NewMiddleware(args, appLog, auth)
+	mdlWare := middleware.NewMiddleware(args, appLog, auth, resPrep)
 
 	// Router
 	router := NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs)
