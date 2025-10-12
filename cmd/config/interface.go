@@ -12,4 +12,7 @@ type Argser interface {
 	// Logger
 	GetBusinessLog() string
 	GetInfraLog() string
+
+	// DB
+	GetDB() string
 }

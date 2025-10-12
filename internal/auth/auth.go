@@ -11,16 +11,18 @@ import (
 )
 
 type Auth struct {
-	Repo    repository.Repository
-	JWTServ JWTokener
-	Core    *AhCore
+	RepoUsers repository.RepoTber
+	Repo      repository.RepoDBer
+	JWTServ   JWTokener
+	Core      *AhCore
 }
 
-func NewAuth(core *AhCore, jwter JWTokener, repo repository.Repository) *Auth {
+func NewAuth(core *AhCore, jwter JWTokener, repo repository.RepoDBer, repoUsers repository.RepoTber) *Auth {
 	return &Auth{
-		JWTServ: jwter,
-		Repo:    repo,
-		Core:    core,
+		RepoUsers: repoUsers,
+		JWTServ:   jwter,
+		Repo:      repo,
+		Core:      core,
 	}
 }
 
@@ -34,7 +36,6 @@ func (u *Auth) CheckAuthReq(req *http.Request) bool {
 	if !foundR {
 		foundL := strings.Contains(url, "login")
 		return foundL
-
 	}
 	return foundR
 }
@@ -47,7 +48,7 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Проверка уникальности login
-	loginIsUnic := u.Repo.CheckUnicRecord(login)
+	loginIsUnic := u.Repo.CheckUnic(u.RepoUsers, login)
 	if !loginIsUnic {
 		// Пользователь не уникален, логин уже занят
 		return nil, nil, ErrLoginNotUnic
@@ -61,9 +62,9 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Запись нового пользователя в БД
-	err = u.Repo.InsertRecord(newUser)
+	err = u.Repo.Create(u.RepoUsers, newUser)
 	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Registration>InsertRecord", err)
+		u.Core.Logg.RaiseError("Auth>Registration>Create", err)
 		return nil, nil, ErrCreateUser
 	}
 
@@ -95,10 +96,8 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Идем в БД
-	recore, err := u.Repo.SelectRecord(login)
+	recore, err := u.Repo.Read(u.RepoUsers, login)
 	if err != nil {
-		// TODO! Пока ошибка только, что login неверный,
-		// потом, возможно стоит расширить спектр. Например 500 ошибка
 		return nil, nil, ErrLogindNotFound
 	}
 

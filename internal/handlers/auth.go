@@ -27,13 +27,13 @@ func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	// Логин, пароль введены некорректно
 	if err == auth.ErrLoginPasswordIsBad {
-		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusBadRequest, err)
+		ah.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	// Введенный логин занят другим пользователем
 	if err == auth.ErrLoginNotUnic {
-		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusConflict, err)
+		ah.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusConflict)
 		return
 	}
 
@@ -43,7 +43,7 @@ func (ah *AuthHandlers) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ah.ResPrep.OkWithJsonAndCookie(w, dataByte, cookie)
+	ah.ResPrep.ResWithJsonAndCookie(w, dataByte, cookie, http.StatusOK)
 }
 
 func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
@@ -51,13 +51,13 @@ func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	// Логин, пароль введены некорректно
 	if err == auth.ErrLoginPasswordIsBad || err == auth.ErrLoginPasswordIsBad2 {
-		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusBadRequest, err)
+		ah.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	// Логин не найден среди зарегистрированных пользователей || Невалидный пароль
 	if err == auth.ErrLogindNotFound || err == auth.ErrPasswordNotValid {
-		ah.ResPrep.BadOrConflWithErrJson(w, http.StatusUnauthorized, err)
+		ah.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusUnauthorized)
 		return
 	}
 
@@ -67,5 +67,5 @@ func (ah *AuthHandlers) LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ah.ResPrep.OkWithJsonAndCookie(w, dataByte, cookie)
+	ah.ResPrep.ResWithJsonAndCookie(w, dataByte, cookie, http.StatusOK)
 }

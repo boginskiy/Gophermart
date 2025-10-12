@@ -1,12 +1,17 @@
 package config
 
-import "time"
+import (
+	"time"
+
+	"github.com/boginskiy/Gophermart/internal/logg"
+)
 
 type Args struct {
+	Logg logg.Logger
 }
 
-func NewArgs() *Args {
-	return &Args{}
+func NewArgs(logger logg.Logger) *Args {
+	return &Args{Logg: logger}
 }
 
 // Host
@@ -40,3 +45,14 @@ func (a *Args) GetInfraLog() string {
 func (a *Args) GetBusinessLog() string {
 	return "businessLog"
 }
+
+// DataBase
+func (a *Args) GetDB() string {
+	return "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
+}
+
+// TODO!
+// Params need
+// Хеширование пароля
+// SALT_KEY_LEN >> saltLen
+// HASH_KEY_LEN >> keyLen

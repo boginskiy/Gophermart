@@ -2,23 +2,18 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/boginskiy/Gophermart/pkg"
+	"time"
 )
 
 func main() {
 
-	password := "ЛОХ777"
+	now := time.Now()
+	formattedTime := now.Format(time.RFC3339)
 
-	// hashByte, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// fmt.Println(hashByte)
-	// err := bcrypt.CompareHashAndPassword(hashByte, []byte(password))
-	// fmt.Println(err == nil)
+	fmt.Println(formattedTime)
 
-	pass, _ := pkg.GenerateHash(password)
+	tt := time.Now()
 
-	res := pkg.CompareHashAndPassword(pass, password)
-
-	fmt.Println(res)
+	fmt.Println(tt.Format(time.RFC3339))
 
 }

@@ -3,7 +3,6 @@ package prepar
 import "net/http"
 
 type ResPreper interface {
-	OkWithJsonAndCookie(w http.ResponseWriter, data []byte, cookie *http.Cookie)
-	BadOrConflWithErrJson(w http.ResponseWriter, status int, err error)
-	UnauthorizedWithJson(w http.ResponseWriter, mess []byte)
+	ResWithJsonAndCookie(w http.ResponseWriter, data []byte, cookie *http.Cookie, status int)
+	ResWithJson(w http.ResponseWriter, data []byte, status int)
 }

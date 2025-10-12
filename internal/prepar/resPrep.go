@@ -11,21 +11,24 @@ func NewResPrep() *ResPrep {
 	return &ResPrep{}
 }
 
-func (r *ResPrep) UnauthorizedWithJson(w http.ResponseWriter, mess []byte) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusUnauthorized)
-	w.Write(mess)
-}
+func (r *ResPrep) ResWithJson(
+	w http.ResponseWriter,
+	data []byte,
+	status int) {
 
-func (r *ResPrep) BadOrConflWithErrJson(w http.ResponseWriter, status int, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write([]byte(err.Error()))
+	w.Write(data)
 }
 
-func (r *ResPrep) OkWithJsonAndCookie(w http.ResponseWriter, data []byte, cookie *http.Cookie) {
+func (r *ResPrep) ResWithJsonAndCookie(
+	w http.ResponseWriter,
+	data []byte,
+	cookie *http.Cookie,
+	status int) {
+
 	http.SetCookie(w, cookie)
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(status)
 	w.Write(data)
 }

@@ -27,9 +27,9 @@ func NewUser(login, password string) (*User, error) {
 	return &User{
 		Login:       login,
 		Password:    hash,
-		CreatedAt:   time.Now().UTC(),
-		UpdatedAt:   time.Now().UTC(),
-		LastLoginAt: time.Now().UTC(),
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+		LastLoginAt: time.Now(),
 		IsActive:    true,
 		Role:        "user",
 	}, nil

@@ -8,48 +8,42 @@ import (
 	"github.com/boginskiy/Gophermart/internal/middleware"
 	"github.com/boginskiy/Gophermart/internal/prepar"
 	"github.com/boginskiy/Gophermart/internal/repository"
+	"github.com/boginskiy/Gophermart/internal/service"
+	"github.com/boginskiy/Gophermart/internal/store"
+	"github.com/boginskiy/Gophermart/pkg"
 )
 
-// Params need
-// Хеширование пароля
-// SALT_KEY_LEN >> saltLen
-// HASH_KEY_LEN >> keyLen
-
-// JWT
-//  token.SignedString([]byte("SecretKey")) - секретный ключ
-//  ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Second)) - время жизни токена
-
-// Куки
-// MaxAge: 300,   // Жива 300 секунд - время жизни
-// Name:     name, - имя кук
-
-func Start() {
-
-	// Args & Logger
-	appLog := logg.NewLogg("appLog")
-	args := config.NewArgs()
-
-	businessLog := logg.NewLogg(args.GetBusinessLog())
-	infraLog := logg.NewLogg(args.GetInfraLog())
+func Start(
+	args config.Argser,
+	appLog logg.Logger,
+	infraLog logg.Logger,
+	businessLog logg.Logger,
+	storeDB store.Dber) {
 
 	// Repository
-	repo := repository.NewRepos(args, infraLog)
+	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
+	// repoOrders := repository.NewRepoOrders()
+	repo := repository.NewRepo(args, infraLog, repoUsers) !!!!!!!!!
 
 	// Authentification
 	JWTServ := auth.NewJWTServ(args, appLog)
 	ahCore := auth.NewAhCore(args, appLog)
-	auth := auth.NewAuth(ahCore, JWTServ, repo)
+	auth := auth.NewAuth(ahCore, JWTServ, repo, repoUsers)
+
+	// Checker
+	orderChecker := pkg.NewLuna()
 
 	// Services
 	// userSrv := service.NewUserSrv(repo, businessLog)
+	orderSrv := service.NewOrderSrv(repo, businessLog, orderChecker)
 
-	// Preparation Response
+	// Preparation response
 	resPrep := prepar.NewResPrep()
 
 	// Handlers
 	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers()
 	balanceHdlrs := handlers.NewBalanceHandlers()
-	orderHdlrs := handlers.NewOrdersHandlers()
+	orderHdlrs := handlers.NewOrdersHandlers(orderSrv, resPrep)
 	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)
 
 	// Middleware
@@ -61,8 +55,12 @@ func Start() {
 	// Start server
 	NewServer(args.GetHost(), appLog).Run(router, mdlWare)
 
-	// Clouse somethings
-	defer businessLog.Clouse()
-	defer infraLog.Clouse()
-	defer appLog.Clouse()
 }
+
+// TODO!
+// Подключаем БД
+// Args доработать
+// Repository сделать нормально
+// Midlewere доработать
+// ВАЖНО! Тестирование
+// ВАЖНО! Многопоточность
