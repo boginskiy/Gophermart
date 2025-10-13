@@ -427,3 +427,143 @@ net/http.(*conn).serve
 2025-10-10T18:01:52+03:00	DEBUG	logg/logg.go:42	[INFO]: AhCore>takeLoginAndPassword>data not found
 2025-10-10T19:46:39+03:00	DEBUG	logg/logg.go:42	[INFO]: AhCore>takeLoginAndPassword>data not found
 2025-10-10T19:47:06+03:00	DEBUG	logg/logg.go:42	[INFO]: AhCore>takeLoginAndPassword>data not found
+2025-10-13T14:01:22+03:00	DEBUG	logg/logg.go:42	[INFO]: AhCore>takeLoginAndPassword>data not found
+2025-10-13T14:01:29+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-13T14:03:56+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-13T14:05:05+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-13T14:06:26+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-13T14:12:53+03:00	ERROR	logg/logg.go:46	[ERROR]: pq: relation "urls" does not exist | Auth>Registration>Create
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/auth.(*Auth).Registration
+	/home/ali/dev/Gophermart/internal/auth/auth.go:67
+github.com/boginskiy/Gophermart/internal/handlers.(*AuthHandlers).RegisterUser
+	/home/ali/dev/Gophermart/internal/handlers/auth.go:26
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:70
+github.com/go-chi/chi.(*Mux).Mount.func1
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:311
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/boginskiy/Gophermart/internal/middleware.(*Middleware).WithAuth.func1
+	/home/ali/dev/Gophermart/internal/middleware/middleware.go:39
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:87
+net/http.serverHandler.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:3301
+net/http.(*conn).serve
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2102
+2025-10-13T14:15:36+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-13T14:16:13+03:00	ERROR	logg/logg.go:46	[ERROR]: pq: duplicate key value violates unique constraint "users_role_key" | Auth>Registration>Create
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/auth.(*Auth).Registration
+	/home/ali/dev/Gophermart/internal/auth/auth.go:67
+github.com/boginskiy/Gophermart/internal/handlers.(*AuthHandlers).RegisterUser
+	/home/ali/dev/Gophermart/internal/handlers/auth.go:26
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:70
+github.com/go-chi/chi.(*Mux).Mount.func1
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:311
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/boginskiy/Gophermart/internal/middleware.(*Middleware).WithAuth.func1
+	/home/ali/dev/Gophermart/internal/middleware/middleware.go:39
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:87
+net/http.serverHandler.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:3301
+net/http.(*conn).serve
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2102
+2025-10-13T14:16:51+03:00	ERROR	logg/logg.go:46	[ERROR]: pq: duplicate key value violates unique constraint "users_role_key" | Auth>Registration>Create
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/auth.(*Auth).Registration
+	/home/ali/dev/Gophermart/internal/auth/auth.go:67
+github.com/boginskiy/Gophermart/internal/handlers.(*AuthHandlers).RegisterUser
+	/home/ali/dev/Gophermart/internal/handlers/auth.go:26
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:70
+github.com/go-chi/chi.(*Mux).Mount.func1
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:311
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/boginskiy/Gophermart/internal/middleware.(*Middleware).WithAuth.func1
+	/home/ali/dev/Gophermart/internal/middleware/middleware.go:39
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:87
+net/http.serverHandler.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:3301
+net/http.(*conn).serve
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2102
+2025-10-13T14:20:36+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-13T14:20:59+03:00	ERROR	logg/logg.go:46	[ERROR]: pq: duplicate key value violates unique constraint "users_role_key" | Auth>Registration>Create
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/auth.(*Auth).Registration
+	/home/ali/dev/Gophermart/internal/auth/auth.go:67
+github.com/boginskiy/Gophermart/internal/handlers.(*AuthHandlers).RegisterUser
+	/home/ali/dev/Gophermart/internal/handlers/auth.go:26
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:70
+github.com/go-chi/chi.(*Mux).Mount.func1
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:311
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).routeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:436
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/boginskiy/Gophermart/internal/middleware.(*Middleware).WithAuth.func1
+	/home/ali/dev/Gophermart/internal/middleware/middleware.go:39
+net/http.HandlerFunc.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2294
+github.com/go-chi/chi.(*Mux).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/go-chi/chi@v1.5.5/mux.go:87
+net/http.serverHandler.ServeHTTP
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:3301
+net/http.(*conn).serve
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2102
+2025-10-13T14:25:03+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}

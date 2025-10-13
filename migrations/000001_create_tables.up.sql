@@ -7,7 +7,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     lastlogin_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
-    role VARCHAR(20) UNIQUE NOT NULL
+    role VARCHAR(20) NOT NULL
 );
 
 CREATE INDEX idx_users_login ON users(login);

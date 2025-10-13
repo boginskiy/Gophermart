@@ -13,21 +13,17 @@ import (
 type RepoUsers struct {
 	Args  config.Argser
 	Logg  logg.Logger
-	store store.Dber
+	Store store.Dber
 }
 
-func NewRepoUsers(argser config.Argser, logger logg.Logger, dber store.Dber) *RepoUsers {
-	return &RepoUsers{
-		Args:  argser,
-		Logg:  logger,
-		store: dber,
-	}
+func NewRepoUsers(argser config.Argser, logger logg.Logger, dber store.Dber) RepoUsersTber {
+	return &RepoUsers{Args: argser, Logg: logger, Store: dber}
 }
 
-func (ru *RepoUsers) CheckUnicRecord(ctx context.Context, item any) (bool, error) {
-	login, ok := item.(string)
-	db, ok := ru.store.GetDB().(*sql.DB)
-	if !ok {
+func (ru *RepoUsers) CheckUnic(ctx context.Context, item any) (bool, error) {
+	db, ok := ru.Store.GetDB().(*sql.DB)
+	login, ok2 := item.(string)
+	if !ok || !ok2 {
 		return false, ErrType
 	}
 
@@ -37,45 +33,49 @@ func (ru *RepoUsers) CheckUnicRecord(ctx context.Context, item any) (bool, error
 
 	var exists bool
 	row.Scan(&exists)
-	return exists, nil
+	return !exists, nil
 }
 
-func (ru *RepoUsers) InsertRecord(ctx context.Context, record any) (int64, error) {
-	newUser, ok := record.(models.User)
-	db, ok := ru.store.GetDB().(*sql.DB)
+func (ru *RepoUsers) Create(ctx context.Context, record *models.User) error {
+	db, ok := ru.Store.GetDB().(*sql.DB)
 	if !ok {
-		return 0, ErrType
+		return ErrType
 	}
 
-	row, _ := db.ExecContext(ctx,
-		`INSERT INTO urls (login, password, created_at, updated_at, lastlogin_at, is_active, role)
+	_, err := db.ExecContext(ctx,
+		`INSERT INTO users (login, password, created_at, updated_at, lastlogin_at, is_active, role)
 		 VALUES ($1, $2, $3, $4, $5, $6, $7);`,
-		newUser.Login,
-		newUser.Password,
-		newUser.CreatedAt,
-		newUser.UpdatedAt,
-		newUser.LastLoginAt,
-		newUser.IsActive,
-		newUser.Role)
+		record.Login,
+		record.Password,
+		record.CreatedAt,
+		record.UpdatedAt,
+		record.LastLoginAt,
+		record.IsActive,
+		record.Role)
 
-	return row.LastInsertId()
-
+	return err
 }
 
-func (ru *RepoUsers) SelectRecord(ctx context.Context, item any) (any, error) {
-	login, ok := item.(string)
-	db, ok := ru.store.GetDB().(*sql.DB)
+func (ru *RepoUsers) Read(ctx context.Context, item any) (record *models.User, err error) {
+	db, ok := ru.Store.GetDB().(*sql.DB)
 	if !ok {
 		return nil, ErrType
 	}
 
-	row := db.QueryRowContext(ctx,
-		`SELECT (id, login, password, created_at, updated_at, lastlogin_at, is_active, role)
-		 FROM users WHERE login = $1);`,
+	login, ok := item.(string)
+	if !ok {
+		return nil, ErrType
+	}
+
+	row := db.QueryRowContext(context.TODO(),
+		`SELECT id, login, password, created_at, updated_at, lastlogin_at, is_active, role
+		 FROM users 
+		 WHERE login = $1`,
 		login)
 
 	var user models.User
-	err := row.Scan(
+
+	err = row.Scan(
 		&user.ID,
 		&user.Login,
 		&user.Password,
@@ -84,13 +84,14 @@ func (ru *RepoUsers) SelectRecord(ctx context.Context, item any) (any, error) {
 		&user.LastLoginAt,
 		&user.IsActive,
 		&user.Role)
-	return user, err
+
+	return &user, err
 }
 
-func (ru *RepoUsers) DeleteRecord(ctx context.Context, record any) error {
+func (ru *RepoUsers) Update(ctx context.Context, record *models.User) error {
 	return nil
 }
 
-func (ru *RepoUsers) UpdateRecord(ctx context.Context, record any) error {
+func (ru *RepoUsers) Delete(ctx context.Context, record *models.User) error {
 	return nil
 }

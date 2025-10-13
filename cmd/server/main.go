@@ -22,20 +22,19 @@ func Start(
 
 	// Repository
 	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
-	// repoOrders := repository.NewRepoOrders()
-	repo := repository.NewRepo(args, infraLog, repoUsers) !!!!!!!!!
+	repoOrders := repository.NewRepoOrders(args, infraLog, storeDB)
+	// repo := repository.NewRepo(args, infraLog, repoUsers)
 
 	// Authentification
 	JWTServ := auth.NewJWTServ(args, appLog)
 	ahCore := auth.NewAhCore(args, appLog)
-	auth := auth.NewAuth(ahCore, JWTServ, repo, repoUsers)
+	auth := auth.NewAuth(ahCore, JWTServ, repoUsers)
 
 	// Checker
 	orderChecker := pkg.NewLuna()
 
 	// Services
-	// userSrv := service.NewUserSrv(repo, businessLog)
-	orderSrv := service.NewOrderSrv(repo, businessLog, orderChecker)
+	orderSrv := service.NewOrderSrv(args, businessLog, repoOrders, orderChecker)
 
 	// Preparation response
 	resPrep := prepar.NewResPrep()

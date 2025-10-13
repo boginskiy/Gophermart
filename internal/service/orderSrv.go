@@ -4,20 +4,28 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/repository"
 )
 
 type OrderSrv struct {
-	Repo       repository.RepoDBer
-	Logger     logg.Logger
+	Args       config.Argser
+	Logg       logg.Logger
+	Repo       repository.RepoOrdersTber
 	OrderCheck OrderChecker
 }
 
-func NewOrderSrv(repo repository.RepoDBer, logger logg.Logger, orderChecker OrderChecker) *OrderSrv {
+func NewOrderSrv(
+	argser config.Argser,
+	logger logg.Logger,
+	repo repository.RepoOrdersTber,
+	orderChecker OrderChecker) *OrderSrv {
+
 	return &OrderSrv{
+		Args:       argser,
+		Logg:       logger,
 		Repo:       repo,
-		Logger:     logger,
 		OrderCheck: orderChecker,
 	}
 }

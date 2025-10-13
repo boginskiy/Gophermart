@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -11,18 +12,16 @@ import (
 )
 
 type Auth struct {
-	RepoUsers repository.RepoTber
-	Repo      repository.RepoDBer
-	JWTServ   JWTokener
-	Core      *AhCore
+	Repo    repository.RepoUsersTber
+	JWTServ JWTokener
+	Core    *AhCore
 }
 
-func NewAuth(core *AhCore, jwter JWTokener, repo repository.RepoDBer, repoUsers repository.RepoTber) *Auth {
+func NewAuth(core *AhCore, jwter JWTokener, repoUsers repository.RepoUsersTber) *Auth {
 	return &Auth{
-		RepoUsers: repoUsers,
-		JWTServ:   jwter,
-		Repo:      repo,
-		Core:      core,
+		Repo:    repoUsers,
+		JWTServ: jwter,
+		Core:    core,
 	}
 }
 
@@ -48,9 +47,10 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Проверка уникальности login
-	loginIsUnic := u.Repo.CheckUnic(u.RepoUsers, login)
+	loginIsUnic, _ := u.Repo.CheckUnic(context.TODO(), login)
 	if !loginIsUnic {
 		// Пользователь не уникален, логин уже занят
+		u.Core.Logg.RaiseInfo(ErrLoginNotUnic.Error())
 		return nil, nil, ErrLoginNotUnic
 	}
 
@@ -62,7 +62,7 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Запись нового пользователя в БД
-	err = u.Repo.Create(u.RepoUsers, newUser)
+	err = u.Repo.Create(context.TODO(), newUser)
 	if err != nil {
 		u.Core.Logg.RaiseError("Auth>Registration>Create", err)
 		return nil, nil, ErrCreateUser
@@ -96,12 +96,10 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Идем в БД
-	recore, err := u.Repo.Read(u.RepoUsers, login)
+	user, err := u.Repo.Read(context.TODO(), login)
 	if err != nil {
 		return nil, nil, ErrLogindNotFound
 	}
-
-	user, _ := recore.(*models.User)
 
 	// Сверка паролей
 	if !pkg.CompareHashAndPassword(user.Password, password) {

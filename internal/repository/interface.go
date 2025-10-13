@@ -1,19 +1,30 @@
 package repository
 
-import "context"
+import (
+	"context"
 
-type RepoDBer interface {
-	CheckUnic(repoTb RepoTber, item any) bool
-	Create(repoTb RepoTber, record any) error
-	Read(repoTb RepoTber, item any) (record any, err error)
-	Update(repoTb RepoTber, record any) error
-	Delete(repoTb RepoTber, record any) error
+	"github.com/boginskiy/Gophermart/models"
+)
+
+type RepoCRUDer[T any] interface {
+	CheckUnic(ctx context.Context, item any) (bool, error)
+	Create(ctx context.Context, model *T) error
+	Read(ctx context.Context, item any) (model *T, err error)
+	Update(ctx context.Context, model *T) error
+	Delete(ctx context.Context, model *T) error
 }
 
-type RepoTber interface {
-	CheckUnicRecord(ctx context.Context, item any) (bool, error)
-	InsertRecord(ctx context.Context, record any) (int64, error)
-	SelectRecord(ctx context.Context, item any) (record any, err error)
-	DeleteRecord(ctx context.Context, record any) error
-	UpdateRecord(ctx context.Context, record any) error
+type RepoOrdersTber interface {
+	RepoCRUDer[models.Order]
+	// Расширение CRUD интерфейса
+}
+
+type RepoUsersTber interface {
+	RepoCRUDer[models.User]
+	// Расширение CRUD интерфейса
+}
+
+type RepoBalancesTber interface {
+	RepoCRUDer[models.Balance]
+	// Расширение CRUD интерфейса
 }

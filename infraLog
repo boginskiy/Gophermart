@@ -1,0 +1,11 @@
+2025-10-13T13:46:23+03:00	ERROR	logg/logg.go:50	[FATAL]: pq: relation "idx_users_login" already exists | StoreDB>createTables
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseFatal
+	/home/ali/dev/Gophermart/internal/logg/logg.go:50
+github.com/boginskiy/Gophermart/internal/store.(*StoreDB).createTables
+	/home/ali/dev/Gophermart/internal/store/storeDB.go:77
+github.com/boginskiy/Gophermart/internal/store.NewStoreDB
+	/home/ali/dev/Gophermart/internal/store/storeDB.go:22
+main.main
+	/home/ali/dev/Gophermart/cmd/gophermart/main.go:22
+runtime.main
+	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/runtime/proc.go:283
