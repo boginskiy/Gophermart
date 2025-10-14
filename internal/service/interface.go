@@ -1,8 +1,13 @@
 package service
 
-import "net/http"
+import (
+	"net/http"
 
-type Srvcer interface {
+	"github.com/boginskiy/Gophermart/internal/auth"
+)
+
+type CoreSrvcer interface {
+	takeParamFromAuth(req *http.Request, p auth.CtxKey) any
 }
 
 type OrderSrvcer interface {

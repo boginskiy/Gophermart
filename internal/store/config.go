@@ -15,6 +15,7 @@ func createTables(s *StoreDB) error {
 	// Create orders
 	_, err = s.db.Exec(`CREATE TABLE orders (
 						id SERIAL PRIMARY KEY,
+						code VARCHAR(20) UNIQUE NOT NULL CHECK(code ~* '^[0-9]+$'),
 						status VARCHAR(20),
 						accrual INTEGER,
 						uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

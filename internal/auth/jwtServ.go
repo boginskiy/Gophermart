@@ -14,6 +14,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 	Login string
 	Role  string
+	ID    int64
 }
 
 type JWTServ struct {
@@ -28,7 +29,7 @@ func NewJWTServ(argser config.Argser, logger logg.Logger) *JWTServ {
 	}
 }
 
-func (j *JWTServ) CreateToken(login, role string) (fullToken string, err error) {
+func (j *JWTServ) CreateToken(login, role string, id int64) (fullToken string, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		Claims{
 			RegisteredClaims: jwt.RegisteredClaims{
@@ -38,13 +39,14 @@ func (j *JWTServ) CreateToken(login, role string) (fullToken string, err error) 
 			},
 			Login: login,
 			Role:  role,
+			ID:    id,
 		})
 
 	// Полный подписанный токен fullToken
 	return token.SignedString(j.Args.GetSecretToken())
 }
 
-func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, err error) {
+func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, id int64, err error) {
 	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(fullToken, claims, func(t *jwt.Token) (any, error) {
@@ -56,14 +58,14 @@ func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, err e
 
 	// Ошибка при проверке токена
 	if err != nil || !token.Valid {
-		return "", "", ErrTokenNotValid
+		return "", "", 0, ErrTokenNotValid
 	}
 
 	// Проверка срока действия токена
 	expirationTime := claims.ExpiresAt.Time
 	if expirationTime.Before(time.Now().UTC()) {
-		return "", "", ErrTokenIsBad
+		return "", "", 0, ErrTokenIsBad
 	}
 
-	return claims.Login, claims.Role, nil
+	return claims.Login, claims.Role, claims.ID, nil
 }

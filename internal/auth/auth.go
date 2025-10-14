@@ -14,10 +14,10 @@ import (
 type Auth struct {
 	Repo    repository.RepoUsersTber
 	JWTServ JWTokener
-	Core    *AhCore
+	Core    *CoreAh
 }
 
-func NewAuth(core *AhCore, jwter JWTokener, repoUsers repository.RepoUsersTber) *Auth {
+func NewAuth(core *CoreAh, jwter JWTokener, repoUsers repository.RepoUsersTber) *Auth {
 	return &Auth{
 		Repo:    repoUsers,
 		JWTServ: jwter,
@@ -25,7 +25,7 @@ func NewAuth(core *AhCore, jwter JWTokener, repoUsers repository.RepoUsersTber) 
 	}
 }
 
-func (u *Auth) CheckToken(token string) (login, role string, err error) {
+func (u *Auth) CheckToken(token string) (login, role string, id int64, err error) {
 	return u.JWTServ.CheckOfValidToken(token)
 }
 
@@ -62,14 +62,14 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Запись нового пользователя в БД
-	err = u.Repo.Create(context.TODO(), newUser)
+	newUserID, err := u.Repo.Create(context.TODO(), newUser)
 	if err != nil {
 		u.Core.Logg.RaiseError("Auth>Registration>Create", err)
 		return nil, nil, ErrCreateUser
 	}
 
 	// Создаем токен по логину
-	token, err := u.JWTServ.CreateToken(newUser.Login, newUser.Role)
+	token, err := u.JWTServ.CreateToken(newUser.Login, newUser.Role, newUserID)
 	if err != nil {
 		u.Core.Logg.RaiseError("Auth>Registration>CreateToken", err)
 		return nil, nil, ErrCreateUser
@@ -107,7 +107,7 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 	}
 
 	// Выдаем новый токен
-	token, err := u.JWTServ.CreateToken(user.Login, user.Role)
+	token, err := u.JWTServ.CreateToken(user.Login, user.Role, user.ID)
 	if err != nil {
 		u.Core.Logg.RaiseError("Auth>Authentication>CreateToken", err)
 		return nil, nil, err

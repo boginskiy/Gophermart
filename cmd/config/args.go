@@ -1,6 +1,7 @@
 package config
 
 import (
+	"runtime"
 	"time"
 
 	"github.com/boginskiy/Gophermart/internal/logg"
@@ -25,12 +26,12 @@ func (a *Args) GetNameCookie() string {
 }
 
 func (a *Args) GetTimeLiveCookie() int {
-	return 300
+	return 3000
 }
 
 // Token
 func (a *Args) GetTimeLiveToken() time.Duration {
-	return (30 * time.Second)
+	return (3000 * time.Second)
 }
 
 func (a *Args) GetSecretToken() []byte {
@@ -49,6 +50,15 @@ func (a *Args) GetBusinessLog() string {
 // DataBase
 func (a *Args) GetDB() string {
 	return "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
+}
+
+// ACCRUAL_SYSTEM_ADDRESS
+func (a *Args) GetACCRUAL_SYSTEM_ADDRESS() string {
+	return "localhost:8081"
+}
+
+func (a *Args) GetMaxConcurrentReq() int {
+	return runtime.GOMAXPROCS(0)
 }
 
 // TODO!

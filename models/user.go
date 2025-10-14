@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID          int       `json:"-"`          // Уникальный идентификатор пользователя
+	ID          int64     `json:"-"`          // Уникальный идентификатор пользователя
 	Login       string    `json:"login"`      // Имя пользователя (может содержать ФИО)
 	Password    string    `json:"-"`          // Хешированный пароль (не отображается при сериализации JSON)
 	CreatedAt   time.Time `json:"created_at"` // Дата регистрации пользователя

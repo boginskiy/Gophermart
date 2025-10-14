@@ -36,15 +36,16 @@ func (ru *RepoUsers) CheckUnic(ctx context.Context, item any) (bool, error) {
 	return !exists, nil
 }
 
-func (ru *RepoUsers) Create(ctx context.Context, record *models.User) error {
+func (ru *RepoUsers) Create(ctx context.Context, record *models.User) (id int64, err error) {
 	db, ok := ru.Store.GetDB().(*sql.DB)
 	if !ok {
-		return ErrType
+		return 0, ErrType
 	}
 
-	_, err := db.ExecContext(ctx,
+	row := db.QueryRowContext(ctx,
 		`INSERT INTO users (login, password, created_at, updated_at, lastlogin_at, is_active, role)
-		 VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)
+		 RETURNING id;`,
 		record.Login,
 		record.Password,
 		record.CreatedAt,
@@ -53,21 +54,17 @@ func (ru *RepoUsers) Create(ctx context.Context, record *models.User) error {
 		record.IsActive,
 		record.Role)
 
-	return err
+	return id, row.Scan(&id)
 }
 
 func (ru *RepoUsers) Read(ctx context.Context, item any) (record *models.User, err error) {
 	db, ok := ru.Store.GetDB().(*sql.DB)
-	if !ok {
+	login, ok2 := item.(string)
+	if !ok || !ok2 {
 		return nil, ErrType
 	}
 
-	login, ok := item.(string)
-	if !ok {
-		return nil, ErrType
-	}
-
-	row := db.QueryRowContext(context.TODO(),
+	row := db.QueryRowContext(ctx,
 		`SELECT id, login, password, created_at, updated_at, lastlogin_at, is_active, role
 		 FROM users 
 		 WHERE login = $1`,

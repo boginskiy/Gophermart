@@ -15,4 +15,8 @@ type Argser interface {
 
 	// DB
 	GetDB() string
+
+	// Внешний сервис
+	GetACCRUAL_SYSTEM_ADDRESS() string
+	GetMaxConcurrentReq() int
 }

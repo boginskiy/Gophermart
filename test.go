@@ -2,18 +2,14 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"runtime"
 )
 
 func main() {
 
-	now := time.Now()
-	formattedTime := now.Format(time.RFC3339)
+	// l := pkg.NewLuna()
+	// orderID := l.GenDigits(8)
 
-	fmt.Println(formattedTime)
-
-	tt := time.Now()
-
-	fmt.Println(tt.Format(time.RFC3339))
+	fmt.Println(runtime.GOMAXPROCS(0))
 
 }

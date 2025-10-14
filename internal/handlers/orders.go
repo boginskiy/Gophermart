@@ -32,14 +32,25 @@ func (oh *OrdersHandlers) UploadOrderNumber(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// Дублирование заявки
+	if err == service.ErrRepeatOrder {
+		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusOK)
+		return
+	}
+
+	// Заявка принадлежит другому пользователю
+	if err == service.ErrAlienOrder {
+		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusConflict)
+		return
+	}
+
 	// Другие ошибки
 	if err != nil {
 		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusBadRequest)
 		return
 	}
 
-	oh.ResPrep.ResWithJson(w, dataByte, http.StatusOK)
-
+	oh.ResPrep.ResWithJson(w, dataByte, http.StatusAccepted)
 }
 
 func (oh *OrdersHandlers) GetUploadedOrders(w http.ResponseWriter, r *http.Request) {

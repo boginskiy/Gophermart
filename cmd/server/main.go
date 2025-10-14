@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+
 	"github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/auth"
 	"github.com/boginskiy/Gophermart/internal/handlers"
@@ -10,6 +12,7 @@ import (
 	"github.com/boginskiy/Gophermart/internal/repository"
 	"github.com/boginskiy/Gophermart/internal/service"
 	"github.com/boginskiy/Gophermart/internal/store"
+	"github.com/boginskiy/Gophermart/models"
 	"github.com/boginskiy/Gophermart/pkg"
 )
 
@@ -23,21 +26,27 @@ func Start(
 	// Repository
 	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
 	repoOrders := repository.NewRepoOrders(args, infraLog, storeDB)
-	// repo := repository.NewRepo(args, infraLog, repoUsers)
 
 	// Authentification
 	JWTServ := auth.NewJWTServ(args, appLog)
-	ahCore := auth.NewAhCore(args, appLog)
-	auth := auth.NewAuth(ahCore, JWTServ, repoUsers)
+	coreAh := auth.NewCoreAh(args, appLog)
+	auth := auth.NewAuth(coreAh, JWTServ, repoUsers)
 
-	// Checker
-	orderChecker := pkg.NewLuna()
+	// Preparation
+	resPrep := prepar.NewResPrep()
+
+	// Chan & Context
+	chOrders := make(chan *models.Order, 10)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	defer close(chOrders)
 
 	// Services
-	orderSrv := service.NewOrderSrv(args, businessLog, repoOrders, orderChecker)
+	orderChecker := pkg.NewLuna()                                  // Servic проверки номера заказа
+	coreSrv := service.NewCoreSrv(args, businessLog, orderChecker) // Servic стандартный функционал
 
-	// Preparation response
-	resPrep := prepar.NewResPrep()
+	orderSrv := service.NewOrderSrv(chOrders, coreSrv, repoOrders) // Servic обработки заявок
+	service.NewLoyalty(ctx, chOrders, coreSrv, repoOrders)         // Servic прокси для расчета бонусов
 
 	// Handlers
 	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers()
@@ -57,9 +66,9 @@ func Start(
 }
 
 // TODO!
-// Подключаем БД
 // Args доработать
-// Repository сделать нормально
+// Err в БД
+// Err вообще
 // Midlewere доработать
 // ВАЖНО! Тестирование
 // ВАЖНО! Многопоточность

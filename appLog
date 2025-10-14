@@ -567,3 +567,4 @@ net/http.serverHandler.ServeHTTP
 net/http.(*conn).serve
 	/home/ali/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.7.linux-amd64/src/net/http/server.go:2102
 2025-10-13T14:25:03+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login is not unic, try again"}
+2025-10-14T18:13:51+03:00	DEBUG	logg/logg.go:42	[INFO]: {"error": "login not unic, try again"}

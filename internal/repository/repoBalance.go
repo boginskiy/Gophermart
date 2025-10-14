@@ -23,8 +23,8 @@ func (rb *RepoBalances) CheckUnic(ctx context.Context, item any) (bool, error) {
 	return false, nil
 }
 
-func (rb *RepoBalances) Create(ctx context.Context, record *models.Balance) error {
-	return nil
+func (rb *RepoBalances) Create(ctx context.Context, record *models.Balance) (id int64, err error) {
+	return 0, nil
 }
 
 func (rb *RepoBalances) Read(ctx context.Context, item any) (record *models.Balance, err error) {

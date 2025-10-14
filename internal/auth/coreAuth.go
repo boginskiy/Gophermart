@@ -9,17 +9,17 @@ import (
 	"github.com/boginskiy/Gophermart/internal/logg"
 )
 
-type AhCore struct {
+type CoreAh struct {
 	Args    config.Argser
 	Logg    logg.Logger
 	JWTServ JWTokener
 }
 
-func NewAhCore(argser config.Argser, logger logg.Logger) *AhCore {
-	return &AhCore{Args: argser, Logg: logger}
+func NewCoreAh(argser config.Argser, logger logg.Logger) *CoreAh {
+	return &CoreAh{Args: argser, Logg: logger}
 }
 
-func (c *AhCore) createCookie(token, name string) *http.Cookie {
+func (c *CoreAh) createCookie(token, name string) *http.Cookie {
 	return &http.Cookie{
 		Name:     name,
 		Value:    token,
@@ -31,13 +31,13 @@ func (c *AhCore) createCookie(token, name string) *http.Cookie {
 	}
 }
 
-func (c *AhCore) takeLoginAndPassword(req *http.Request) (login, password string, err error) {
+func (c *CoreAh) takeLoginAndPassword(req *http.Request) (login, password string, err error) {
 	// Читаем body req
 	dataByte, err := io.ReadAll(req.Body)
 
 	defer req.Body.Close()
 	if err != nil {
-		c.Logg.RaiseError("AhCore>takeLoginAndPassword>ReadAll", err)
+		c.Logg.RaiseError("CoreAh>takeLoginAndPassword>ReadAll", err)
 		return "", "", err
 	}
 
@@ -45,7 +45,7 @@ func (c *AhCore) takeLoginAndPassword(req *http.Request) (login, password string
 	var overallStruct = make(map[string]any)
 	err = json.Unmarshal(dataByte, &overallStruct)
 	if err != nil {
-		c.Logg.RaiseError("AhCore>takeLoginAndPassword>Unmarshal", err)
+		c.Logg.RaiseError("CoreAh>takeLoginAndPassword>Unmarshal", err)
 		return "", "", ErrLoginPasswordIsBad
 	}
 
@@ -56,14 +56,14 @@ func (c *AhCore) takeLoginAndPassword(req *http.Request) (login, password string
 		}
 	}
 
-	c.Logg.RaiseInfo("AhCore>takeLoginAndPassword>data not found")
+	c.Logg.RaiseInfo("CoreAh>takeLoginAndPassword>data not found")
 	return "", "", ErrLoginPasswordIsBad
 }
 
-func (c *AhCore) takeParamFromCtx(req *http.Request, p CtxKey) string {
+func (c *CoreAh) takeParamFromCtx(req *http.Request, p CtxKey) string {
 	param, ok := req.Context().Value(p).(string)
 	if !ok {
-		c.Logg.RaiseError("AhCore>takeParamFromCtx", nil)
+		c.Logg.RaiseError("CoreAh>takeParamFromCtx", nil)
 		return ""
 	}
 	return param

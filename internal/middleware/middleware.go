@@ -33,7 +33,7 @@ func NewMiddleware(
 func (m *Middleware) WithAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// Этап 1. Пользователь отправил запрос на регистрацию/авторизацию
+		// Этап 1. Регистрация/авторизация пользователя
 		hasCredentials := m.Auth.CheckAuthReq(r)
 		if hasCredentials {
 			next.ServeHTTP(w, r)
@@ -50,14 +50,15 @@ func (m *Middleware) WithAuth(next http.Handler) http.Handler {
 		}
 
 		// Присутствуют Cookie. Token просрочен/невалидный
-		login, role, err := m.Auth.CheckToken(cookie.Value)
+		login, role, id, err := m.Auth.CheckToken(cookie.Value)
 		if err != nil {
 			m.ResPrep.ResWithJson(w, auth.MessNeedRegOrAuth, http.StatusUnauthorized)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), auth.CtxLogin, login)
-		ctx = context.WithValue(ctx, auth.CtxRole, role)
+		ctx := context.WithValue(r.Context(), auth.CtxUserLogin, login)
+		ctx = context.WithValue(ctx, auth.CtxUserRole, role)
+		ctx = context.WithValue(ctx, auth.CtxUserID, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

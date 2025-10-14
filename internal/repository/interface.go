@@ -3,28 +3,29 @@ package repository
 import (
 	"context"
 
-	"github.com/boginskiy/Gophermart/models"
+	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type RepoCRUDer[T any] interface {
 	CheckUnic(ctx context.Context, item any) (bool, error)
-	Create(ctx context.Context, model *T) error
+	Create(ctx context.Context, model *T) (id int64, err error)
 	Read(ctx context.Context, item any) (model *T, err error)
 	Update(ctx context.Context, model *T) error
 	Delete(ctx context.Context, model *T) error
 }
 
 type RepoOrdersTber interface {
-	RepoCRUDer[models.Order]
+	RepoCRUDer[mod.Order]
 	// Расширение CRUD интерфейса
+	ReadWithUser(ctx context.Context, orderCode string) (record *mod.UserOrder, err error)
 }
 
 type RepoUsersTber interface {
-	RepoCRUDer[models.User]
+	RepoCRUDer[mod.User]
 	// Расширение CRUD интерфейса
 }
 
 type RepoBalancesTber interface {
-	RepoCRUDer[models.Balance]
+	RepoCRUDer[mod.Balance]
 	// Расширение CRUD интерфейса
 }
