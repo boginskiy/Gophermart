@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/boginskiy/Gophermart/internal/auth"
@@ -17,4 +18,9 @@ type OrderSrvcer interface {
 type OrderChecker interface {
 	CheckDigits(digits string) bool
 	GenDigits(long int) string
+}
+
+type GatewaySrvcer interface {
+	ConsumerAccruals(ctx context.Context)
+	ConsumerOrders(ctx context.Context)
 }

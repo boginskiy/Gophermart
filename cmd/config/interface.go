@@ -1,13 +1,20 @@
 package config
 
-import "time"
+import (
+	"time"
+)
 
 type Argser interface {
+	// Server
+	GetHost() string
+
+	// Cookie
 	GetNameCookie() string
 	GetTimeLiveCookie() int
+
+	// Token
 	GetTimeLiveToken() time.Duration
 	GetSecretToken() []byte
-	GetHost() string
 
 	// Logger
 	GetBusinessLog() string
@@ -16,7 +23,10 @@ type Argser interface {
 	// DB
 	GetDB() string
 
-	// Внешний сервис
-	GetACCRUAL_SYSTEM_ADDRESS() string
+	// Внешний сервис AccrualSystem
+	GetSystemAddress() string
 	GetMaxConcurrentReq() int
+	TimeWaitingResponse() time.Duration
+	GetSystemPath() string
+	GetTimeTicker() time.Duration
 }

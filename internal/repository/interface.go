@@ -18,6 +18,8 @@ type RepoOrdersTber interface {
 	RepoCRUDer[mod.Order]
 	// Расширение CRUD интерфейса
 	ReadWithUser(ctx context.Context, orderCode string) (record *mod.UserOrder, err error)
+	UpdateSetStatuses(ctx context.Context, records []*mod.Accrual) error
+	UpdateSetStatuses2(ctx context.Context, records []*mod.Order) error
 }
 
 type RepoUsersTber interface {

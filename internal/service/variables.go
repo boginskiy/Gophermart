@@ -1,6 +1,10 @@
 package service
 
-import "errors"
+import (
+	"errors"
+)
+
+const SIZE = 10
 
 // Errors
 var (

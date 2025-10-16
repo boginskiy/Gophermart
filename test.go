@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"runtime"
+
+	"github.com/boginskiy/Gophermart/pkg"
 )
 
 func main() {
 
-	// l := pkg.NewLuna()
-	// orderID := l.GenDigits(8)
+	l := pkg.NewLuna()
+	orderID := l.GenDigits(8)
 
-	fmt.Println(runtime.GOMAXPROCS(0))
+	fmt.Println(orderID)
 
 }

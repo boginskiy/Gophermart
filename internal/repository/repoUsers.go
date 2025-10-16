@@ -21,9 +21,9 @@ func NewRepoUsers(argser config.Argser, logger logg.Logger, dber store.Dber) Rep
 }
 
 func (ru *RepoUsers) CheckUnic(ctx context.Context, item any) (bool, error) {
-	db, ok := ru.Store.GetDB().(*sql.DB)
-	login, ok2 := item.(string)
-	if !ok || !ok2 {
+	db := ru.Store.GetDB().(*sql.DB)
+	login, ok := item.(string)
+	if !ok {
 		return false, ErrType
 	}
 
@@ -37,10 +37,7 @@ func (ru *RepoUsers) CheckUnic(ctx context.Context, item any) (bool, error) {
 }
 
 func (ru *RepoUsers) Create(ctx context.Context, record *models.User) (id int64, err error) {
-	db, ok := ru.Store.GetDB().(*sql.DB)
-	if !ok {
-		return 0, ErrType
-	}
+	db := ru.Store.GetDB().(*sql.DB)
 
 	row := db.QueryRowContext(ctx,
 		`INSERT INTO users (login, password, created_at, updated_at, lastlogin_at, is_active, role)
@@ -58,9 +55,9 @@ func (ru *RepoUsers) Create(ctx context.Context, record *models.User) (id int64,
 }
 
 func (ru *RepoUsers) Read(ctx context.Context, item any) (record *models.User, err error) {
-	db, ok := ru.Store.GetDB().(*sql.DB)
-	login, ok2 := item.(string)
-	if !ok || !ok2 {
+	db := ru.Store.GetDB().(*sql.DB)
+	login, ok := item.(string)
+	if !ok {
 		return nil, ErrType
 	}
 

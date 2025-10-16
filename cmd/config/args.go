@@ -52,13 +52,25 @@ func (a *Args) GetDB() string {
 	return "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
 }
 
-// ACCRUAL_SYSTEM_ADDRESS
-func (a *Args) GetACCRUAL_SYSTEM_ADDRESS() string {
+// Удаленный сервис
+func (a *Args) GetSystemAddress() string { // ACCRUAL_SYSTEM_ADDRESS
 	return "localhost:8081"
 }
 
 func (a *Args) GetMaxConcurrentReq() int {
-	return runtime.GOMAXPROCS(0)
+	return runtime.NumCPU()
+}
+
+func (a *Args) TimeWaitingResponse() time.Duration {
+	return time.Duration(10 * time.Second)
+}
+
+func (a *Args) GetTimeTicker() time.Duration {
+	return time.Duration(5 * time.Second)
+}
+
+func (a *Args) GetSystemPath() string {
+	return "/api/orders/"
 }
 
 // TODO!

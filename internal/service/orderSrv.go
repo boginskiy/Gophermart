@@ -11,8 +11,6 @@ import (
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
-const SIZE = 10
-
 type OrderSrv struct {
 	ChOrders chan *models.Order
 	Core     *CoreSrv
@@ -26,12 +24,6 @@ func NewOrderSrv(chOrders chan *models.Order, c *CoreSrv, r repo.RepoOrdersTber)
 		Repo:     r,
 	}
 }
-
-// func (o *OrderSrv) sendOrderToLoyaltySrv(order *mod.Order) {
-// 	go func(order *mod.Order) {
-// 		o.ChOrders <- order
-// 	}(order)
-// }
 
 func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 	// Вынимаем номер заказа
@@ -68,6 +60,7 @@ func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 	// Создаем новую запись с заказом. Сохраняем в БД
 	userID := o.Core.takeParamFromAuth(req, auth.CtxUserID)
 	newOrder := mod.NewOrder(orderCode, userID.(int64))
+
 	_, err = o.Repo.Create(context.TODO(), newOrder)
 	if err != nil {
 		return nil, err
