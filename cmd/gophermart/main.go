@@ -12,7 +12,7 @@ func main() {
 	appLog := logg.NewLogg("appLog")
 
 	// Args
-	args := config.NewArgs(appLog)
+	args := config.NewArgsENV(appLog)
 
 	// Extra loggers
 	businessLog := logg.NewLogg(args.GetBusinessLog())

@@ -43,7 +43,7 @@ func (j *JWTServ) CreateToken(login, role string, id int64) (fullToken string, e
 		})
 
 	// Полный подписанный токен fullToken
-	return token.SignedString(j.Args.GetSecretToken())
+	return token.SignedString(j.Args.GetSecretKeyToken())
 }
 
 func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, id int64, err error) {
@@ -53,7 +53,7 @@ func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, id in
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return j.Args.GetSecretToken(), nil
+		return j.Args.GetSecretKeyToken(), nil
 	})
 
 	// Ошибка при проверке токена

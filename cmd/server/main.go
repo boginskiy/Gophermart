@@ -24,8 +24,9 @@ func Start(
 	storeDB store.Dber) {
 
 	// Repository
-	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
+	repoLoyaltyOrders := repository.NewRepoLoyaltyOrders(args, infraLog, storeDB)
 	repoOrders := repository.NewRepoOrders(args, infraLog, storeDB)
+	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
 
 	// Authentification
 	JWTServ := auth.NewJWTServ(args, appLog)
@@ -42,15 +43,17 @@ func Start(
 	defer close(chOrders)
 
 	// Services
-	orderChecker := pkg.NewLuna()                                  // Service проверки номера заказа
-	coreSrv := service.NewCoreSrv(args, businessLog, orderChecker) // Service стандартный функционал
+	orderChecker := pkg.NewLuna() // Service проверки номера заказа
 
-	orderSrv := service.NewOrderSrv(chOrders, coreSrv, repoOrders) // Service обработки заявок
-	service.NewGatewaySrv(ctx, chOrders, coreSrv, repoOrders)      // Service прокси для расчета бонусов
+	coreSrv := service.NewCoreSrv(args, businessLog, orderChecker)               // coreSrv - сервис с базовым функционалом
+	orderSrv := service.NewOrderSrv(chOrders, coreSrv, repoOrders)               // orderSrv - сервис обработки заявок по расчету
+	balanceSrv := service.NewBalanceServ(coreSrv, repoOrders, repoLoyaltyOrders) // balanceSrv - сервис обработки бонусов
+
+	service.NewGatewaySrv(ctx, chOrders, coreSrv, repoOrders) // Service прокси для расчета бонусов
 
 	// Handlers
 	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers()
-	balanceHdlrs := handlers.NewBalanceHandlers()
+	balanceHdlrs := handlers.NewBalanceHandlers(balanceSrv, resPrep)
 	orderHdlrs := handlers.NewOrdersHandlers(orderSrv, resPrep)
 	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)
 
@@ -61,7 +64,7 @@ func Start(
 	router := NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs)
 
 	// Start server
-	NewServer(args.GetHost(), appLog).Run(router, mdlWare)
+	NewServer(args.GetRunAddress(), appLog).Run(router, mdlWare)
 
 }
 
@@ -71,4 +74,4 @@ func Start(
 // Err вообще
 // Midlewere доработать
 // ВАЖНО! Тестирование
-// ВАЖНО! Многопоточность
+// ВАЖНО! Многопоточность (теория пройти)

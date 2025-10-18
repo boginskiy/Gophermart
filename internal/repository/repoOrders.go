@@ -190,3 +190,55 @@ func (rb *RepoOrders) UpdateSetStatuses2(ctx context.Context, records []*mod.Ord
 
 	return err
 }
+
+func (rb *RepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) (records []*mod.Order, err error) {
+	db := rb.Store.GetDB().(*sql.DB)
+	rows, err := db.QueryContext(ctx,
+		`SELECT
+			id, code, status, accrual, uploaded_at, user_id
+		FROM orders
+		WHERE user_id = $1
+		ORDER BY uploaded_at DESC`,
+		userID)
+
+	if err != nil {
+		rb.Logg.RaiseError("RepoOrders>ReadOrdersWithSort>QueryContext", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+	records = make([]*mod.Order, 0, 10)
+
+	for rows.Next() {
+		var record mod.Order
+		err := rows.Scan(
+			&record.ID,
+			&record.Code,
+			&record.Status,
+			&record.Accrual,
+			&record.UploadedAt,
+			&record.UserID)
+
+		if err != nil {
+			rb.Logg.RaiseError("RepoOrders>ReadOrdersWithSort>Scan", err)
+		} else {
+			records = append(records, &record)
+		}
+	}
+	return records, nil
+}
+
+func (rb *RepoOrders) ReadAccruals(ctx context.Context, userID int64) (int, error) {
+	db := rb.Store.GetDB().(*sql.DB)
+	var totalSum int
+
+	err := db.QueryRowContext(ctx,
+		`SELECT SUM(accrual)
+		 FROM orders
+		 WHERE user_id = $1`,
+		userID).Scan(&totalSum)
+	if err != nil {
+		return 0, err
+	}
+	return totalSum, nil
+}

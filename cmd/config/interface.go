@@ -6,27 +6,22 @@ import (
 
 type Argser interface {
 	// Server
-	GetHost() string
-
+	GetRunAddress() string
 	// Cookie
 	GetNameCookie() string
 	GetTimeLiveCookie() int
-
 	// Token
 	GetTimeLiveToken() time.Duration
-	GetSecretToken() []byte
-
+	GetSecretKeyToken() []byte
 	// Logger
 	GetBusinessLog() string
 	GetInfraLog() string
-
 	// DB
-	GetDB() string
-
-	// Внешний сервис AccrualSystem
-	GetSystemAddress() string
-	GetMaxConcurrentReq() int
-	TimeWaitingResponse() time.Duration
-	GetSystemPath() string
+	GetDbUri() string
+	// BonusCalc
+	GetAccrualAddress() string
+	GetAccrualMaxReq() int
+	GetAccrualWaiteRes() time.Duration
+	GetAccrualPath() string
 	GetTimeTicker() time.Duration
 }

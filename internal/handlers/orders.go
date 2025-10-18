@@ -54,5 +54,19 @@ func (oh *OrdersHandlers) UploadOrderNumber(w http.ResponseWriter, r *http.Reque
 }
 
 func (oh *OrdersHandlers) GetUploadedOrders(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("GetUploadedOrders"))
+	dataByte, err := oh.OrderServ.GetOrders(r)
+
+	// Ошибки сервера
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Заказы отсутствуют
+	if 0 == len(dataByte) {
+		oh.ResPrep.ResWithJson(w, service.MessNoOrders, http.StatusNoContent)
+		return
+	}
+
+	oh.ResPrep.ResWithJson(w, dataByte, http.StatusOK)
 }

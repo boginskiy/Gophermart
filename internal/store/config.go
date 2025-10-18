@@ -13,7 +13,7 @@ func createTables(s *StoreDB) error {
 				role VARCHAR(20) NOT NULL);`)
 
 	// Create orders
-	_, err = s.db.Exec(`CREATE TABLE orders (
+	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS orders (
 						id SERIAL PRIMARY KEY,
 						code VARCHAR(20) UNIQUE NOT NULL CHECK(code ~* '^[0-9]+$'),
 						status VARCHAR(20),
@@ -21,7 +21,16 @@ func createTables(s *StoreDB) error {
 						uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						user_id INTEGER REFERENCES users(id) ON DELETE CASCADE);`)
 
-	// Crrate INDEXs
+	// Create INDEXs
 	_, err = s.db.Exec(`CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);`)
+
+	// Create loyalty_orders
+	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS loyalty_orders (
+						id SERIAL PRIMARY KEY,
+						code VARCHAR(20) UNIQUE NOT NULL CHECK(code ~* '^[0-9]+$'),
+						deduction INTEGER,
+						processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						user_id INTEGER REFERENCES users(id) ON DELETE CASCADE);`)
+
 	return err
 }

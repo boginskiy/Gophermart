@@ -1,80 +1,160 @@
 package config
 
 import (
+	"os"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/boginskiy/Gophermart/internal/logg"
+	"github.com/caarlos0/env"
 )
 
-type Args struct {
+type ArgsENV struct {
 	Logg logg.Logger
+
+	RunAddress      string `env:"RUN_ADDRESS"`            //
+	NameCookie      string `env:"NAME_COOKIE"`            //
+	TimeLiveCookie  int    `env:"TIME_LIVE_COOKIE"`       //
+	SecretKeyToken  string `env:"SECRET_KEY_TOKEN"`       //
+	TimeLiveToken   int    `env:"TIME_LIVE_TOKEN"`        //
+	InfraLog        string `env:"INFRA_LOG_FILE"`         //
+	BusinessLog     string `env:"BUSINESS_LOG_FILE"`      //
+	DbUri           string `env:"DATABASE_URI"`           //
+	TimeTicker      int    `env:"TIME_TICKER"`            //
+	AccrualAddress  string `env:"ACCRUAL_SYSTEM_ADDRESS"` //
+	AccrualMaxReq   int    `env:"ACCRUAL_MAX_REQUEST"`    //
+	AccrualWaiteRes int    `env:"ACCRUAL_WAITE_RESPONSE"` //
+	AccrualPath     string `env:"ACCRUAL_PATH"`           //
 }
 
-func NewArgs(logger logg.Logger) *Args {
-	return &Args{Logg: logger}
+func NewArgsENV(logger logg.Logger) *ArgsENV {
+	args := &ArgsENV{Logg: logger}
+	args.ParseFlags()
+	return args
 }
 
-// Host
-func (a *Args) GetHost() string {
-	return ":8080"
+func (e *ArgsENV) ParseFlags() {
+	err := env.Parse(e)
+	if err != nil {
+		e.Logg.RaiseError("ArgsENV>ParseFlags>Parse", err)
+	}
+
+	// Default
+	valueStr := strings.TrimSpace(os.Getenv("RUN_ADDRESS"))
+	if len(valueStr) == 0 {
+		e.RunAddress = ":8080"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("NAME_COOKIE"))
+	if len(valueStr) == 0 {
+		e.NameCookie = "auth_cookie"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("TIME_LIVE_COOKIE"))
+	if len(valueStr) == 0 {
+		e.TimeLiveCookie = 3000
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("SECRET_KEY_TOKEN"))
+	if len(valueStr) == 0 {
+		e.SecretKeyToken = "Ld5pS4Gw"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("TIME_LIVE_TOKEN"))
+	if len(valueStr) == 0 {
+		e.TimeLiveToken = 3000
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("INFRA_LOG_FILE"))
+	if len(valueStr) == 0 {
+		e.InfraLog = "infraLog"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("BUSINESS_LOG_FILE"))
+	if len(valueStr) == 0 {
+		e.BusinessLog = "businessLog"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("DATABASE_URI"))
+	if len(valueStr) == 0 {
+		e.DbUri = "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("TIME_TICKER"))
+	if len(valueStr) == 0 {
+		e.TimeTicker = 5
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_SYSTEM_ADDRESS"))
+	if len(valueStr) == 0 {
+		e.AccrualAddress = "localhost:8081"
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_MAX_REQUEST"))
+	if len(valueStr) == 0 {
+		e.AccrualMaxReq = runtime.NumCPU()
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_WAITE_RESPONSE"))
+	if len(valueStr) == 0 {
+		e.AccrualWaiteRes = 10
+	}
+
+	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_PATH"))
+	if len(valueStr) == 0 {
+		e.AccrualPath = "/api/orders/"
+	}
 }
 
-// Cookie
-func (a *Args) GetNameCookie() string {
-	return "auth_cookie"
+func (e *ArgsENV) GetRunAddress() string {
+	return e.RunAddress
 }
 
-func (a *Args) GetTimeLiveCookie() int {
-	return 3000
+func (e *ArgsENV) GetNameCookie() string {
+	return e.NameCookie
 }
 
-// Token
-func (a *Args) GetTimeLiveToken() time.Duration {
-	return (3000 * time.Second)
+func (e *ArgsENV) GetTimeLiveCookie() int {
+	return e.TimeLiveCookie
 }
 
-func (a *Args) GetSecretToken() []byte {
-	return []byte("SecretKey")
+func (e *ArgsENV) GetTimeLiveToken() time.Duration {
+	return time.Duration(time.Duration(e.TimeLiveToken) * time.Second)
 }
 
-// Logger
-func (a *Args) GetInfraLog() string {
-	return "infraLog"
+func (e *ArgsENV) GetSecretKeyToken() []byte {
+	return []byte(e.SecretKeyToken)
 }
 
-func (a *Args) GetBusinessLog() string {
-	return "businessLog"
+func (e *ArgsENV) GetInfraLog() string {
+	return e.InfraLog
 }
 
-// DataBase
-func (a *Args) GetDB() string {
-	return "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
+func (e *ArgsENV) GetBusinessLog() string {
+	return e.BusinessLog
 }
 
-// Удаленный сервис
-func (a *Args) GetSystemAddress() string { // ACCRUAL_SYSTEM_ADDRESS
-	return "localhost:8081"
+func (e *ArgsENV) GetDbUri() string {
+	return e.DbUri
 }
 
-func (a *Args) GetMaxConcurrentReq() int {
-	return runtime.NumCPU()
+func (e *ArgsENV) GetAccrualAddress() string {
+	return e.AccrualAddress
 }
 
-func (a *Args) TimeWaitingResponse() time.Duration {
-	return time.Duration(10 * time.Second)
+func (e *ArgsENV) GetAccrualMaxReq() int {
+	return e.AccrualMaxReq
 }
 
-func (a *Args) GetTimeTicker() time.Duration {
-	return time.Duration(5 * time.Second)
+func (e *ArgsENV) GetAccrualWaiteRes() time.Duration {
+	return time.Duration(time.Duration(e.AccrualWaiteRes) * time.Second)
 }
 
-func (a *Args) GetSystemPath() string {
-	return "/api/orders/"
+func (e *ArgsENV) GetTimeTicker() time.Duration {
+	return time.Duration(time.Duration(e.TimeTicker) * time.Second)
 }
 
-// TODO!
-// Params need
-// Хеширование пароля
-// SALT_KEY_LEN >> saltLen
-// HASH_KEY_LEN >> keyLen
+func (e *ArgsENV) GetAccrualPath() string {
+	return e.AccrualPath
+}

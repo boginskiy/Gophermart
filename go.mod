@@ -6,6 +6,7 @@ toolchain go1.24.7
 
 require (
 	github.com/aileron-projects/go v0.0.0-alpha.16
+	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/go-chi/chi v1.5.5
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/lib/pq v1.10.9

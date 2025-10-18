@@ -13,6 +13,7 @@ type CoreSrvcer interface {
 
 type OrderSrvcer interface {
 	UploadOrder(r *http.Request) ([]byte, error)
+	GetOrders(r *http.Request) ([]byte, error)
 }
 
 type OrderChecker interface {
@@ -23,4 +24,9 @@ type OrderChecker interface {
 type GatewaySrvcer interface {
 	ConsumerAccruals(ctx context.Context)
 	ConsumerOrders(ctx context.Context)
+}
+
+type BalanceSrvcer interface {
+	GetBalance(req *http.Request) ([]byte, error)
+	GetWithdrawal(req *http.Request) ([]byte, error)
 }

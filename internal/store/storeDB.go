@@ -28,7 +28,7 @@ func NewStoreDB(argser config.Argser, logger logg.Logger) *StoreDB {
 }
 
 func (s *StoreDB) Open() {
-	db, err := sql.Open("postgres", s.Args.GetDB())
+	db, err := sql.Open("postgres", s.Args.GetDbUri())
 	if err != nil {
 		s.Logg.RaiseFatal("StoreDB>NewDB>Open", err)
 	}

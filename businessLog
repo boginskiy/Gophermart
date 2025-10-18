@@ -1,0 +1,112 @@
+2025-10-17T12:25:27+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:25:32+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:25:37+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:25:42+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:25:47+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:25:52+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:25:57+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:26:02+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:26:07+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:26:12+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:26:17+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:26:22+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:26:27+03:00	ERROR	logg/logg.go:46	[ERROR]: Get "localhost:8081/api/orders/96357934": unsupported protocol scheme "localhost" | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:40:18+03:00	ERROR	logg/logg.go:46	[ERROR]: {"mess": "HTTP request failed with status 429"} | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T12:40:23+03:00	ERROR	logg/logg.go:46	[ERROR]: {"mess": "HTTP request failed with status 429"} | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:147
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:185
+2025-10-17T13:01:48+03:00	ERROR	logg/logg.go:46	[ERROR]: {"mess": "HTTP request failed with status 500"} | GatewaySrv>sendOrderToDistantSrv>procesData
+github.com/boginskiy/Gophermart/internal/logg.(*Logg).RaiseError
+	/home/ali/dev/Gophermart/internal/logg/logg.go:46
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).procesData
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:153
+github.com/boginskiy/Gophermart/internal/service.(*GatewaySrv).sendOrderToDistantSrv
+	/home/ali/dev/Gophermart/internal/service/gatewaySrv.go:191

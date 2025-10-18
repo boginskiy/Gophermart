@@ -14,10 +14,13 @@ var (
 	ErrOrderNumber        = errors.New(`{"mess": "number of order is not valid"}`)
 	ErrAlienOrder         = errors.New(`{"mess": "application does not belong to you"}`)
 	ErrRepeatOrder        = errors.New(`{"mess": "application is processing"}`)
+	ErrBonuseLimit        = errors.New(`{"mess": "request bonuse is not valid"}`)
 )
 
 // Mess
 var MessNewOrder = []byte(`{"mess": "new order has been accepted for processing"}`)
+var MessOverLoadOrder = []byte(`{"mess": "service is overload, try request again"}`)
+var MessNoOrders = []byte(`{"mess": "no orders"}`)
 
 // Empty
 var EmptySliceOfBytes = []byte{}

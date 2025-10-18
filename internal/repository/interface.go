@@ -20,6 +20,8 @@ type RepoOrdersTber interface {
 	ReadWithUser(ctx context.Context, orderCode string) (record *mod.UserOrder, err error)
 	UpdateSetStatuses(ctx context.Context, records []*mod.Accrual) error
 	UpdateSetStatuses2(ctx context.Context, records []*mod.Order) error
+	ReadOrdersWithSort(ctx context.Context, userID int64) (records []*mod.Order, err error)
+	ReadAccruals(ctx context.Context, userID int64) (int, error)
 }
 
 type RepoUsersTber interface {
@@ -27,7 +29,8 @@ type RepoUsersTber interface {
 	// Расширение CRUD интерфейса
 }
 
-type RepoBalancesTber interface {
-	RepoCRUDer[mod.Balance]
+type RepoLoyaltyOrdersTber interface {
+	RepoCRUDer[mod.LoyaltyOrder]
 	// Расширение CRUD интерфейса
+	ReadDeductions(ctx context.Context, userID int64) (int, error)
 }

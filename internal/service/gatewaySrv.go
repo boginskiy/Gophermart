@@ -33,11 +33,11 @@ func NewGatewaySrv(ctx context.Context, chOrders chan *mod.Order, core *CoreSrv,
 		Repo:     repo,
 		Ctx:      ctx,
 
-		semaphore:  make(chan struct{}, core.Args.GetMaxConcurrentReq()),
-		timeWaite:  core.Args.TimeWaitingResponse(),
-		host:       core.Args.GetSystemAddress(),
+		semaphore:  make(chan struct{}, core.Args.GetAccrualMaxReq()),
+		timeWaite:  core.Args.GetAccrualWaiteRes(),
+		host:       core.Args.GetAccrualAddress(),
 		chAccruals: make(chan *mod.Accrual, SIZE),
-		path:       core.Args.GetSystemPath(),
+		path:       core.Args.GetAccrualPath(),
 		client:     &http.Client{},
 	}
 
@@ -55,20 +55,22 @@ func (l *GatewaySrv) ConsumerAccruals(ctx context.Context) {
 	// Читаем из канала. При закрытии канала данные должны упасть в БД
 	slAccruals := make([]*mod.Accrual, 0, 10)
 
-	select {
+	for {
+		select {
 
-	// Данные поступили. Делаем запись в БД раз в N-сек
-	case <-ticker.C:
-		slAccruals = l.SendAccrualsToDB(slAccruals)
+		// Данные поступили. Делаем запись в БД раз в N-сек
+		case <-ticker.C:
+			slAccruals = l.SendAccrualsToDB(slAccruals)
 
-	// Собираем данные для последующей записи
-	case accrual := <-l.chAccruals:
-		slAccruals = append(slAccruals, accrual)
+		// Собираем данные для последующей записи
+		case accrual := <-l.chAccruals:
+			slAccruals = append(slAccruals, accrual)
 
-	case <-ctx.Done():
-		// Дописываем остатки данных
-		l.SendAccrualsToDB(slAccruals)
-		return
+		case <-ctx.Done():
+			// Дописываем остатки данных
+			l.SendAccrualsToDB(slAccruals)
+			return
+		}
 	}
 }
 
@@ -137,13 +139,14 @@ func (l *GatewaySrv) fetchData(ctx context.Context, url string) (*mod.Accrual, e
 
 func (l *GatewaySrv) procesData(order *mod.Order, accrual *mod.Accrual, err error) {
 	// Логика обработки кодов StatusCode: 204, 429, 500
-	if _, ok := err.(*ErrHTTP); !ok {
+	if _, ok := err.(*ErrHTTP); ok {
 
 		// Если удаленный сервис по каким либо причинам, а именно:
 		//    StatusCode 204 — заказ не зарегистрирован в системе расчёта
 		//    StatusCode 429 — превышено количество запросов к сервису
 		//    StatusCode 500 — внутренняя ошибка сервера
-		// то передаем заявку в очередь на повторный запрос
+		// то передаем заявку повторно в очередь обработки
+
 		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData", err)
 		l.ChOrders <- order
 		return
@@ -198,11 +201,9 @@ func (l *GatewaySrv) SendOrdersToDistantSrv(orders []*mod.Order) []*mod.Order {
 	}
 
 	for _, order := range orders {
-		url := fmt.Sprintf("%s%s%s", l.host, l.path, order.Code)
-
+		url := fmt.Sprintf("http://%s%s%s", l.host, l.path, order.Code)
 		// Ограничитель одновременно выполняемых запросов
 		l.semaphore <- struct{}{}
-
 		// Отправляем запрос в обработку
 		go l.sendOrderToDistantSrv(order, url)
 	}

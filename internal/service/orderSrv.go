@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 
@@ -22,6 +23,17 @@ func NewOrderSrv(chOrders chan *models.Order, c *CoreSrv, r repo.RepoOrdersTber)
 		ChOrders: chOrders,
 		Core:     c,
 		Repo:     r,
+	}
+}
+
+// sendOrdersToGateWay - метод для отправки заказов в сервис 'GateWay'
+func (o *OrderSrv) sendOrdersToGateWay(order *mod.Order) []byte {
+	select {
+	case o.ChOrders <- order:
+		return MessNewOrder
+	default:
+		// Если переполнение очереди заказов, сообщаем, что сервис перегружен
+		return MessOverLoadOrder
 	}
 }
 
@@ -66,9 +78,23 @@ func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	// Передаем через общий канал 'newOrder' в модуль, который
-	// взаимодействует с сервисом расчета баллов лояльности
-	o.ChOrders <- newOrder
+	// Передаем через общий канал 'ChOrders' заказ в gateway-модуль
+	mess := o.sendOrdersToGateWay(newOrder)
 
-	return MessNewOrder, nil
+	return mess, nil
+}
+
+func (o *OrderSrv) GetOrders(req *http.Request) ([]byte, error) {
+	userID := o.Core.takeParamFromAuth(req, auth.CtxUserID)
+	orders, err := o.Repo.ReadOrdersWithSort(context.TODO(), userID.(int64))
+
+	if err != nil {
+		return nil, err
+	}
+
+	if 0 == len(orders) {
+		return EmptySliceOfBytes, nil
+	}
+
+	return json.Marshal(orders)
 }
