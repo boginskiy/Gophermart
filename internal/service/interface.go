@@ -30,3 +30,7 @@ type BalanceSrvcer interface {
 	GetBalance(req *http.Request) ([]byte, error)
 	GetWithdrawal(req *http.Request) ([]byte, error)
 }
+
+type WithdrawalSrvcer interface {
+	GetWithdrawalHistory(req *http.Request) ([]byte, error)
+}

@@ -32,5 +32,6 @@ type RepoUsersTber interface {
 type RepoLoyaltyOrdersTber interface {
 	RepoCRUDer[mod.LoyaltyOrder]
 	// Расширение CRUD интерфейса
-	ReadDeductions(ctx context.Context, userID int64) (int, error)
+	TotalSumOfDeductions(ctx context.Context, userID int64) (int, error)
+	ReadDeductions(ctx context.Context, userID int64) (records []*mod.LoyaltyOrder, err error)
 }

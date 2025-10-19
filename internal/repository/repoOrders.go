@@ -220,7 +220,7 @@ func (rb *RepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) (rec
 			&record.UserID)
 
 		if err != nil {
-			rb.Logg.RaiseError("RepoOrders>ReadOrdersWithSort>Scan", err)
+			rb.Logg.RaiseInfo(err.Error())
 		} else {
 			records = append(records, &record)
 		}

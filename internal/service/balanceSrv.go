@@ -32,7 +32,7 @@ func (bs *BalanceServ) GetBalance(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	deductions, err := bs.RepoLoyaltyOrders.ReadDeductions(context.TODO(), userID.(int64))
+	deductions, err := bs.RepoLoyaltyOrders.TotalSumOfDeductions(context.TODO(), userID.(int64))
 	if err != nil {
 		return nil, err
 	}

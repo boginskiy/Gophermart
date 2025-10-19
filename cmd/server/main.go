@@ -43,16 +43,15 @@ func Start(
 	defer close(chOrders)
 
 	// Services
-	orderChecker := pkg.NewLuna() // Service проверки номера заказа
-
+	orderChecker := pkg.NewLuna()                                                // orderChecker - сервис  проверки номера заказа
 	coreSrv := service.NewCoreSrv(args, businessLog, orderChecker)               // coreSrv - сервис с базовым функционалом
 	orderSrv := service.NewOrderSrv(chOrders, coreSrv, repoOrders)               // orderSrv - сервис обработки заявок по расчету
 	balanceSrv := service.NewBalanceServ(coreSrv, repoOrders, repoLoyaltyOrders) // balanceSrv - сервис обработки бонусов
-
-	service.NewGatewaySrv(ctx, chOrders, coreSrv, repoOrders) // Service прокси для расчета бонусов
+	withdrawalsSrv := service.NewWithdrawalsSrv(coreSrv, repoLoyaltyOrders)      // withdrawalsSrv - сервис обработки использованных бонусов
+	service.NewGatewaySrv(ctx, chOrders, coreSrv, repoOrders)                    // gatewaySrv - сервис прокси для расчета бонусов
 
 	// Handlers
-	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers()
+	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers(withdrawalsSrv, resPrep)
 	balanceHdlrs := handlers.NewBalanceHandlers(balanceSrv, resPrep)
 	orderHdlrs := handlers.NewOrdersHandlers(orderSrv, resPrep)
 	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)

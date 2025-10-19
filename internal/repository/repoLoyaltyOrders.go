@@ -8,6 +8,7 @@ import (
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/store"
 	"github.com/boginskiy/Gophermart/models"
+	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type RepoLoyaltyOrders struct {
@@ -51,7 +52,7 @@ func (rl *RepoLoyaltyOrders) Delete(ctx context.Context, record *models.LoyaltyO
 	return nil
 }
 
-func (rl *RepoLoyaltyOrders) ReadDeductions(ctx context.Context, userID int64) (int, error) {
+func (rl *RepoLoyaltyOrders) TotalSumOfDeductions(ctx context.Context, userID int64) (int, error) {
 	db := rl.Store.GetDB().(*sql.DB)
 	var totalSum int
 
@@ -64,4 +65,40 @@ func (rl *RepoLoyaltyOrders) ReadDeductions(ctx context.Context, userID int64) (
 		return 0, err
 	}
 	return totalSum, nil
+}
+
+func (rl *RepoLoyaltyOrders) ReadDeductions(ctx context.Context, userID int64) (records []*mod.LoyaltyOrder, err error) {
+	db := rl.Store.GetDB().(*sql.DB)
+	rows, err := db.QueryContext(ctx,
+		`SELECT
+			id, code, deduction, processed_at, user_id
+		FROM loyalty_orders
+		WHERE user_id = $1
+		ORDER BY processed_at DESC`,
+		userID)
+
+	if err != nil {
+		rl.Logg.RaiseError("RepoLoyaltyOrders>ReadDeductions>QueryContext", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+	records = make([]*mod.LoyaltyOrder, 0, 10)
+
+	for rows.Next() {
+		var record mod.LoyaltyOrder
+		err := rows.Scan(
+			&record.ID,
+			&record.Code,
+			&record.Deduction,
+			&record.ProcessedAt,
+			&record.UserID)
+
+		if err != nil {
+			rl.Logg.RaiseInfo(err.Error())
+		} else {
+			records = append(records, &record)
+		}
+	}
+	return records, nil
 }
