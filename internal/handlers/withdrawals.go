@@ -33,10 +33,10 @@ func (wh *WithdrawalsHandlers) GetWithdrawalHistory(w http.ResponseWriter, r *ht
 	}
 
 	// Исторические данные отсутствуют
-	if 0 == len(dataByte) {
-		wh.ResPrep.ResWithJson(w, service.MessNoOrders, http.StatusNoContent)
+	if len(dataByte) == 0 {
+		wh.ResPrep.ResWithJSON(w, service.MessNoOrders, http.StatusNoContent)
 		return
 	}
 
-	wh.ResPrep.ResWithJson(w, dataByte, http.StatusOK)
+	wh.ResPrep.ResWithJSON(w, dataByte, http.StatusOK)
 }

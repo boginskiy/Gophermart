@@ -29,7 +29,7 @@ func (bh *BalanceHandlers) GetCurrentBalance(w http.ResponseWriter, r *http.Requ
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	bh.ResPrep.ResWithJson(w, dataByte, http.StatusOK)
+	bh.ResPrep.ResWithJSON(w, dataByte, http.StatusOK)
 }
 
 func (bh *BalanceHandlers) RequestWithdrawal(w http.ResponseWriter, r *http.Request) {
@@ -37,13 +37,13 @@ func (bh *BalanceHandlers) RequestWithdrawal(w http.ResponseWriter, r *http.Requ
 
 	// Неверный номер заказа
 	if err == service.ErrOrderNumber {
-		bh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusUnprocessableEntity)
+		bh.ResPrep.ResWithJSON(w, []byte(err.Error()), http.StatusUnprocessableEntity)
 		return
 	}
 
 	// Ошибка превышения лимита бонуса
 	if err == service.ErrBonuseLimit {
-		bh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusPaymentRequired)
+		bh.ResPrep.ResWithJSON(w, []byte(err.Error()), http.StatusPaymentRequired)
 		return
 	}
 
@@ -53,5 +53,5 @@ func (bh *BalanceHandlers) RequestWithdrawal(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	bh.ResPrep.ResWithJson(w, dataByte, http.StatusOK)
+	bh.ResPrep.ResWithJSON(w, dataByte, http.StatusOK)
 }

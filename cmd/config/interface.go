@@ -17,7 +17,7 @@ type Argser interface {
 	GetBusinessLog() string
 	GetInfraLog() string
 	// DB
-	GetDbUri() string
+	GetDBURI() string
 	// BonusCalc
 	GetAccrualAddress() string
 	GetAccrualMaxReq() int

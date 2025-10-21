@@ -201,8 +201,8 @@ func (rb *RepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) (rec
 		ORDER BY uploaded_at DESC`,
 		userID)
 
-	if err != nil {
-		rb.Logg.RaiseError("RepoOrders>ReadOrdersWithSort>QueryContext", err)
+	if err != nil || rows.Err() != nil {
+		rb.Logg.RaiseError("RepoOrders>ReadOrdersWithSort>QueryContext", rows.Err())
 		return nil, err
 	}
 

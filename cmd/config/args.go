@@ -20,7 +20,7 @@ type ArgsENV struct {
 	TimeLiveToken   int    `env:"TIME_LIVE_TOKEN"`        //
 	InfraLog        string `env:"INFRA_LOG_FILE"`         //
 	BusinessLog     string `env:"BUSINESS_LOG_FILE"`      //
-	DbUri           string `env:"DATABASE_URI"`           //
+	DBURI           string `env:"DATABASE_URI"`           //
 	TimeTicker      int    `env:"TIME_TICKER"`            //
 	AccrualAddress  string `env:"ACCRUAL_SYSTEM_ADDRESS"` //
 	AccrualMaxReq   int    `env:"ACCRUAL_MAX_REQUEST"`    //
@@ -78,12 +78,12 @@ func (e *ArgsENV) ParseFlags() {
 
 	valueStr = strings.TrimSpace(os.Getenv("DATABASE_URI"))
 	if len(valueStr) == 0 {
-		e.DbUri = "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
+		e.DBURI = "postgres://username:userpassword@localhost:5432/gophermartdb?sslmode=disable"
 	}
 
 	valueStr = strings.TrimSpace(os.Getenv("TIME_TICKER"))
 	if len(valueStr) == 0 {
-		e.TimeTicker = 5
+		e.TimeTicker = 1
 	}
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_SYSTEM_ADDRESS"))
@@ -98,7 +98,7 @@ func (e *ArgsENV) ParseFlags() {
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_WAITE_RESPONSE"))
 	if len(valueStr) == 0 {
-		e.AccrualWaiteRes = 10
+		e.AccrualWaiteRes = 1
 	}
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_PATH"))
@@ -135,8 +135,8 @@ func (e *ArgsENV) GetBusinessLog() string {
 	return e.BusinessLog
 }
 
-func (e *ArgsENV) GetDbUri() string {
-	return e.DbUri
+func (e *ArgsENV) GetDBURI() string {
+	return e.DBURI
 }
 
 func (e *ArgsENV) GetAccrualAddress() string {

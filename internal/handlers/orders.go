@@ -28,29 +28,29 @@ func (oh *OrdersHandlers) UploadOrderNumber(w http.ResponseWriter, r *http.Reque
 
 	// Невалидный номер заказа
 	if err == service.ErrOrderNumber {
-		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusUnprocessableEntity)
+		oh.ResPrep.ResWithJSON(w, []byte(err.Error()), http.StatusUnprocessableEntity)
 		return
 	}
 
 	// Дублирование заявки
 	if err == service.ErrRepeatOrder {
-		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusOK)
+		oh.ResPrep.ResWithJSON(w, []byte(err.Error()), http.StatusOK)
 		return
 	}
 
 	// Заявка принадлежит другому пользователю
 	if err == service.ErrAlienOrder {
-		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusConflict)
+		oh.ResPrep.ResWithJSON(w, []byte(err.Error()), http.StatusConflict)
 		return
 	}
 
 	// Другие ошибки
 	if err != nil {
-		oh.ResPrep.ResWithJson(w, []byte(err.Error()), http.StatusBadRequest)
+		oh.ResPrep.ResWithJSON(w, []byte(err.Error()), http.StatusBadRequest)
 		return
 	}
 
-	oh.ResPrep.ResWithJson(w, dataByte, http.StatusAccepted)
+	oh.ResPrep.ResWithJSON(w, dataByte, http.StatusAccepted)
 }
 
 func (oh *OrdersHandlers) GetUploadedOrders(w http.ResponseWriter, r *http.Request) {
@@ -63,10 +63,10 @@ func (oh *OrdersHandlers) GetUploadedOrders(w http.ResponseWriter, r *http.Reque
 	}
 
 	// Заказы отсутствуют
-	if 0 == len(dataByte) {
-		oh.ResPrep.ResWithJson(w, service.MessNoOrders, http.StatusNoContent)
+	if len(dataByte) == 0 {
+		oh.ResPrep.ResWithJSON(w, service.MessNoOrders, http.StatusNoContent)
 		return
 	}
 
-	oh.ResPrep.ResWithJson(w, dataByte, http.StatusOK)
+	oh.ResPrep.ResWithJSON(w, dataByte, http.StatusOK)
 }

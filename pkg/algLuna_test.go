@@ -2,14 +2,14 @@ package pkg
 
 import "testing"
 
-func test_genRandomDigitsStr(t *testing.T, luna *Luna) {
+func testgenRandomDigitsStr(t *testing.T, luna *Luna) {
 	dataInput := 5
 	if st := luna.genRandomDigitsStr(dataInput); len(st) != dataInput {
 		t.Errorf("genRandomDigitsStr: expected/actual: %v/%v", dataInput, len(st))
 	}
 }
 
-func test_preparCheckSum(t *testing.T, luna *Luna) {
+func testpreparCheckSum(t *testing.T, luna *Luna) {
 	dataInput := "12345"
 	expected := "5"
 	if actual := luna.preparCheckSum(dataInput); expected != actual {
@@ -17,7 +17,7 @@ func test_preparCheckSum(t *testing.T, luna *Luna) {
 	}
 }
 
-func test_CheckDigits(t *testing.T, luna *Luna) {
+func testCheckDigits(t *testing.T, luna *Luna) {
 	dataTests := []struct {
 		nameTest  string
 		dataInput string
@@ -44,7 +44,7 @@ func test_CheckDigits(t *testing.T, luna *Luna) {
 	}
 }
 
-func test_GenDigits(t *testing.T, luna *Luna) {
+func testGenDigits(t *testing.T, luna *Luna) {
 	// GenDigits test positive
 	result := luna.GenDigits(5)
 	actual := luna.CheckDigits(result)
@@ -68,8 +68,8 @@ func TestLuna(t *testing.T) {
 	// Инициализация
 	luna := NewLuna()
 
-	test_genRandomDigitsStr(t, luna)
-	test_preparCheckSum(t, luna)
-	test_CheckDigits(t, luna)
-	test_GenDigits(t, luna)
+	testgenRandomDigitsStr(t, luna)
+	testpreparCheckSum(t, luna)
+	testCheckDigits(t, luna)
+	testGenDigits(t, luna)
 }

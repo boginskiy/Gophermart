@@ -7,7 +7,6 @@ import (
 	"github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/store"
-	"github.com/boginskiy/Gophermart/models"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
@@ -25,7 +24,7 @@ func (rl *RepoLoyaltyOrders) CheckUnic(ctx context.Context, item any) (bool, err
 	return false, nil
 }
 
-func (rl *RepoLoyaltyOrders) Create(ctx context.Context, record *models.LoyaltyOrder) (id int64, err error) {
+func (rl *RepoLoyaltyOrders) Create(ctx context.Context, record *mod.LoyaltyOrder) (id int64, err error) {
 	db := rl.Store.GetDB().(*sql.DB)
 
 	row := db.QueryRowContext(ctx,
@@ -40,15 +39,15 @@ func (rl *RepoLoyaltyOrders) Create(ctx context.Context, record *models.LoyaltyO
 	return id, row.Scan(&id)
 }
 
-func (rl *RepoLoyaltyOrders) Read(ctx context.Context, item any) (record *models.LoyaltyOrder, err error) {
+func (rl *RepoLoyaltyOrders) Read(ctx context.Context, item any) (record *mod.LoyaltyOrder, err error) {
 	return nil, nil
 }
 
-func (rl *RepoLoyaltyOrders) Update(ctx context.Context, record *models.LoyaltyOrder) error {
+func (rl *RepoLoyaltyOrders) Update(ctx context.Context, record *mod.LoyaltyOrder) error {
 	return nil
 }
 
-func (rl *RepoLoyaltyOrders) Delete(ctx context.Context, record *models.LoyaltyOrder) error {
+func (rl *RepoLoyaltyOrders) Delete(ctx context.Context, record *mod.LoyaltyOrder) error {
 	return nil
 }
 
@@ -77,8 +76,8 @@ func (rl *RepoLoyaltyOrders) ReadDeductions(ctx context.Context, userID int64) (
 		ORDER BY processed_at DESC`,
 		userID)
 
-	if err != nil {
-		rl.Logg.RaiseError("RepoLoyaltyOrders>ReadDeductions>QueryContext", err)
+	if err != nil || rows.Err() != nil {
+		rl.Logg.RaiseError("RepoLoyaltyOrders>ReadDeductions>QueryContext", rows.Err())
 		return nil, err
 	}
 

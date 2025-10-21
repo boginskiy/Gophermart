@@ -29,7 +29,7 @@ func (w *WithdrawalsSrv) GetWithdrawalHistory(req *http.Request) ([]byte, error)
 		return nil, err
 	}
 
-	if 0 == len(withdrawals) {
+	if len(withdrawals) == 0 {
 		return EmptySliceOfBytes, nil
 	}
 

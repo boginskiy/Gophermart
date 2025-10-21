@@ -11,6 +11,9 @@ func createTables(s *StoreDB) error {
 				lastlogin_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				is_active BOOLEAN DEFAULT TRUE,
 				role VARCHAR(20) NOT NULL);`)
+	if err != nil {
+		return err
+	}
 
 	// Create orders
 	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS orders (
@@ -20,9 +23,15 @@ func createTables(s *StoreDB) error {
 						accrual INTEGER,
 						uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						user_id INTEGER REFERENCES users(id) ON DELETE CASCADE);`)
+	if err != nil {
+		return err
+	}
 
 	// Create INDEXs
 	_, err = s.db.Exec(`CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);`)
+	if err != nil {
+		return err
+	}
 
 	// Create loyalty_orders
 	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS loyalty_orders (
@@ -31,6 +40,5 @@ func createTables(s *StoreDB) error {
 						deduction INTEGER,
 						processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						user_id INTEGER REFERENCES users(id) ON DELETE CASCADE);`)
-
 	return err
 }

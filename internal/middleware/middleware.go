@@ -45,14 +45,14 @@ func (m *Middleware) WithAuth(next http.Handler) http.Handler {
 
 		// Отсутствуют Cookie. Отправляем сообщение о необходимости регистрации/авторизации
 		if err != nil {
-			m.ResPrep.ResWithJson(w, auth.MessNeedRegOrAuth, http.StatusUnauthorized)
+			m.ResPrep.ResWithJSON(w, auth.MessNeedRegOrAuth, http.StatusUnauthorized)
 			return
 		}
 
 		// Присутствуют Cookie. Token просрочен/невалидный
 		login, role, id, err := m.Auth.CheckToken(cookie.Value)
 		if err != nil {
-			m.ResPrep.ResWithJson(w, auth.MessNeedRegOrAuth, http.StatusUnauthorized)
+			m.ResPrep.ResWithJSON(w, auth.MessNeedRegOrAuth, http.StatusUnauthorized)
 			return
 		}
 

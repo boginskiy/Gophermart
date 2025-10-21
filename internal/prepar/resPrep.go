@@ -11,7 +11,7 @@ func NewResPrep() *ResPrep {
 	return &ResPrep{}
 }
 
-func (r *ResPrep) ResWithJson(
+func (r *ResPrep) ResWithJSON(
 	w http.ResponseWriter,
 	data []byte,
 	status int) {
@@ -21,7 +21,7 @@ func (r *ResPrep) ResWithJson(
 	w.Write(data)
 }
 
-func (r *ResPrep) ResWithJsonAndCookie(
+func (r *ResPrep) ResWithJSONAndCookie(
 	w http.ResponseWriter,
 	data []byte,
 	cookie *http.Cookie,

@@ -8,17 +8,16 @@ import (
 
 	"github.com/boginskiy/Gophermart/internal/auth"
 	repo "github.com/boginskiy/Gophermart/internal/repository"
-	"github.com/boginskiy/Gophermart/models"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type OrderSrv struct {
-	ChOrders chan *models.Order
+	ChOrders chan *mod.Order
 	Core     *CoreSrv
 	Repo     repo.RepoOrdersTber
 }
 
-func NewOrderSrv(chOrders chan *models.Order, c *CoreSrv, r repo.RepoOrdersTber) *OrderSrv {
+func NewOrderSrv(chOrders chan *mod.Order, c *CoreSrv, r repo.RepoOrdersTber) *OrderSrv {
 	return &OrderSrv{
 		ChOrders: chOrders,
 		Core:     c,
@@ -92,7 +91,7 @@ func (o *OrderSrv) GetOrders(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	if 0 == len(orders) {
+	if len(orders) == 0 {
 		return EmptySliceOfBytes, nil
 	}
 

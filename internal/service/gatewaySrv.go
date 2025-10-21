@@ -7,13 +7,12 @@ import (
 	"net/http"
 	"time"
 
-	repo "github.com/boginskiy/Gophermart/internal/repository"
 	repos "github.com/boginskiy/Gophermart/internal/repository"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type GatewaySrv struct {
-	Repo     repo.RepoOrdersTber
+	Repo     repos.RepoOrdersTber
 	ChOrders chan *mod.Order
 	Core     *CoreSrv
 	Ctx      context.Context
@@ -190,7 +189,7 @@ func (l *GatewaySrv) sendOrderToDistantSrv(order *mod.Order, url string) {
 }
 
 func (l *GatewaySrv) SendOrdersToDistantSrv(orders []*mod.Order) []*mod.Order {
-	if 0 == len(orders) {
+	if len(orders) == 0 {
 		return orders
 	}
 
