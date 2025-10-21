@@ -63,14 +63,17 @@ func Start(
 	router := NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs)
 
 	// Start server
-	NewServer(args.GetRunAddress(), appLog).Run(router, mdlWare)
+	NewServer(args, appLog).Run(router, mdlWare)
 
 }
 
 // TODO!
 // Args доработать
 // Err в БД
-// Err вообще
-// Midlewere доработать
-// ВАЖНО! Тестирование
-// ВАЖНО! Многопоточность (теория пройти)
+// Midlewere доработать. Сжатие
+// Документацию!
+// Тестирование!
+// Удаление SQL таблиц после завершения работы сервиса?
+
+// По теории
+// Error, Многопоточность ...

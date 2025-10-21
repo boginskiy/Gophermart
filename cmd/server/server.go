@@ -3,18 +3,19 @@ package server
 import (
 	"net/http"
 
+	"github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/middleware"
 )
 
 type Serv struct {
-	args   string
+	args   config.Argser
 	Logger logg.Logger
 }
 
-func NewServer(args string, logger logg.Logger) *Serv {
+func NewServer(argser config.Argser, logger logg.Logger) *Serv {
 	return &Serv{
-		args:   args,
+		args:   argser,
 		Logger: logger,
 	}
 }
@@ -22,5 +23,5 @@ func NewServer(args string, logger logg.Logger) *Serv {
 func (s *Serv) Run(router Router, mv middleware.Mdlwarer) {
 	s.Logger.RaiseFatal(
 		"server is not running",
-		http.ListenAndServe(`:8080`, router.Run(mv)))
+		http.ListenAndServe(s.args.GetRunAddress(), router.Run(mv)))
 }
