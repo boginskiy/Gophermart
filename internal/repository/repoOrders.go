@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/boginskiy/Gophermart/cmd/config"
@@ -238,6 +239,9 @@ func (rb *RepoOrders) ReadAccruals(ctx context.Context, userID int64) (int, erro
 		 WHERE user_id = $1`,
 		userID).Scan(&totalSum)
 	if err != nil {
+
+		log.Printf("userID: %v\n", userID)
+
 		return 0, err
 	}
 	return totalSum, nil

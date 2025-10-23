@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/boginskiy/Gophermart/internal/auth"
@@ -29,11 +30,13 @@ func (bs *BalanceServ) GetBalance(req *http.Request) ([]byte, error) {
 
 	accruals, err := bs.RepoOrders.ReadAccruals(context.TODO(), userID.(int64))
 	if err != nil {
+		log.Println("1>>", err)
 		return nil, err
 	}
 
 	deductions, err := bs.RepoLoyaltyOrders.TotalSumOfDeductions(context.TODO(), userID.(int64))
 	if err != nil {
+		log.Println("2>>", err)
 		return nil, err
 	}
 
