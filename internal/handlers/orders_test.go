@@ -59,7 +59,7 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 		url      string
 		method   string
 		body     string
-		ctxKey   auth.CtxKey
+		ctxKey   string
 		ctxValue any
 	}
 
@@ -79,7 +79,8 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				method:   "POST",
 				body:     "12345678",
 				ctxKey:   auth.CtxUserLogin,
-				ctxValue: "TestMan"},
+				ctxValue: "TestMan",
+			},
 		},
 		{
 			name: "number of order is duplication",
@@ -92,7 +93,8 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				method:   "POST",
 				body:     "68379148",
 				ctxKey:   auth.CtxUserLogin,
-				ctxValue: "TestMan"},
+				ctxValue: "TestMan",
+			},
 		},
 		{
 			name: "application belongs to another user",
@@ -105,7 +107,8 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				method:   "POST",
 				body:     "68379148",
 				ctxKey:   auth.CtxUserLogin,
-				ctxValue: "TestMan2"},
+				ctxValue: "TestMan2",
+			},
 		},
 		{
 			name: "new load of application",
@@ -118,7 +121,8 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				method:   "POST",
 				body:     "96357934",
 				ctxKey:   auth.CtxUserID,
-				ctxValue: int64(1)},
+				ctxValue: int64(100),
+			},
 		},
 	}
 
@@ -128,7 +132,7 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 			body := bytes.NewReader([]byte(tt.tReq.body))
 			req := httptest.NewRequest(tt.tReq.method, tt.tReq.url, body)
 
-			// Context with 'TestMan'
+			// Context
 			ctx := context.WithValue(req.Context(), tt.tReq.ctxKey, tt.tReq.ctxValue)
 			req = req.WithContext(ctx)
 
@@ -156,7 +160,7 @@ func testGetUploadedOrders(t *testing.T, handler *handlers.OrdersHandlers) {
 		url      string
 		method   string
 		body     string
-		ctxKey   auth.CtxKey
+		ctxKey   string
 		ctxValue any
 	}
 

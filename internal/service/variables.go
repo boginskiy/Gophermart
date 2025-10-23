@@ -13,7 +13,7 @@ var (
 	ErrCreateUser         = errors.New(`{"mess": "user has not been created"}`)
 	ErrOrderNumber        = errors.New(`{"mess": "number of order is not valid"}`)
 	ErrAlienOrder         = errors.New(`{"mess": "application does not belong to you"}`)
-	ErrRepeatOrder        = errors.New(`{"mess": "application is processing"}`)
+	ErrRepeatOrder        = errors.New(`{"mess": "application was loaded"}`)
 	ErrBonuseLimit        = errors.New(`{"mess": "request bonuse is not valid"}`)
 )
 

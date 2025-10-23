@@ -59,12 +59,3 @@ func (c *CoreAh) takeLoginAndPassword(req *http.Request) (login, password string
 	c.Logg.RaiseInfo("CoreAh>takeLoginAndPassword>data not found")
 	return "", "", ErrLoginPasswordIsBad
 }
-
-func (c *CoreAh) takeParamFromCtx(req *http.Request, p CtxKey) string {
-	param, ok := req.Context().Value(p).(string)
-	if !ok {
-		c.Logg.RaiseError("CoreAh>takeParamFromCtx", nil)
-		return ""
-	}
-	return param
-}

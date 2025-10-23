@@ -3,12 +3,10 @@ package service
 import (
 	"context"
 	"net/http"
-
-	"github.com/boginskiy/Gophermart/internal/auth"
 )
 
 type CoreSrvcer interface {
-	takeParamFromAuth(req *http.Request, p auth.CtxKey) any
+	takeParamFromAuth(req *http.Request, p string) any
 }
 
 type OrderSrvcer interface {
