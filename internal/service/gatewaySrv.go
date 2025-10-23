@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -113,11 +114,13 @@ func (l *GatewaySrv) ConsumerOrders(ctx context.Context) {
 func (l *GatewaySrv) fetchData(ctx context.Context, url string) (*mod.Accrual, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
+		log.Println("4>>", err)
 		return nil, err
 	}
 
 	res, err := l.client.Do(req)
 	if err != nil {
+		log.Println("5>>", err)
 		return nil, err
 	}
 
@@ -125,12 +128,14 @@ func (l *GatewaySrv) fetchData(ctx context.Context, url string) (*mod.Accrual, e
 
 	// Обработка кодов ответа: 204, 429, 500
 	if res.StatusCode != http.StatusOK {
+		log.Println("6>>", res.StatusCode)
 		return nil, NewErrHTTP(res.StatusCode)
 	}
 
 	var accrual mod.Accrual
 	err = json.NewDecoder(res.Body).Decode(&accrual)
 	if err != nil {
+		log.Println("7>>", err)
 		return nil, err
 	}
 	return &accrual, nil
@@ -146,7 +151,7 @@ func (l *GatewaySrv) procesData(order *mod.Order, accrual *mod.Accrual, err erro
 		//    StatusCode 500 — внутренняя ошибка сервера
 		// то передаем заявку повторно в очередь обработки
 
-		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData", err)
+		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData1", err)
 		l.ChOrders <- order
 		return
 	}
@@ -154,7 +159,7 @@ func (l *GatewaySrv) procesData(order *mod.Order, accrual *mod.Accrual, err erro
 	// Внутренние ошибки обработки
 	if err != nil || accrual == nil {
 		// Передаем заявку повторно в очередь обработки
-		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData", err)
+		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData2", err)
 		l.ChOrders <- order
 		return
 	}
@@ -183,6 +188,8 @@ func (l *GatewaySrv) sendOrderToDistantSrv(order *mod.Order, url string) {
 	// Отправляем запрос на получение данных о бонусах
 	accrual, err := l.fetchData(ctx, url)
 
+	log.Println("11>>", order, accrual, err)
+
 	// Обработка результата
 	l.procesData(order, accrual, err)
 
@@ -196,11 +203,13 @@ func (l *GatewaySrv) SendOrdersToDistantSrv(orders []*mod.Order) []*mod.Order {
 	// Массово меняем статус на "PROCESSING"
 	err := l.Repo.UpdateSetStatuses2(context.TODO(), orders)
 	if err != nil {
+		log.Println("9>>", err)
 		l.Core.Logg.RaiseInfo("GatewaySrv>SendOrderToService: query is bad")
 	}
 
 	for _, order := range orders {
 		url := fmt.Sprintf("http://%s%s%s", l.host, l.path, order.Code)
+		log.Println("10>>", url)
 		// Ограничитель одновременно выполняемых запросов
 		l.semaphore <- struct{}{}
 		// Отправляем запрос в обработку

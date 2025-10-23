@@ -28,6 +28,7 @@ func NewOrderSrv(chOrders chan *mod.Order, c *CoreSrv, r repo.RepoOrdersTber) *O
 
 // sendOrdersToGateWay - метод для отправки заказов в сервис 'GateWay'
 func (o *OrderSrv) sendOrdersToGateWay(order *mod.Order) []byte {
+	log.Println("8>>", order)
 	select {
 	case o.ChOrders <- order:
 		return MessNewOrder
