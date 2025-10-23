@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/boginskiy/Gophermart/internal/auth"
@@ -28,7 +27,6 @@ func NewOrderSrv(chOrders chan *mod.Order, c *CoreSrv, r repo.RepoOrdersTber) *O
 
 // sendOrdersToGateWay - метод для отправки заказов в сервис 'GateWay'
 func (o *OrderSrv) sendOrdersToGateWay(order *mod.Order) []byte {
-	log.Println("pass 8>>", order)
 	select {
 	case o.ChOrders <- order:
 		return MessNewOrder
@@ -90,7 +88,6 @@ func (o *OrderSrv) GetOrders(req *http.Request) ([]byte, error) {
 	orders, err := o.Repo.ReadOrdersWithSort(context.TODO(), userID.(int64))
 
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 

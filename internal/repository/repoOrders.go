@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/boginskiy/Gophermart/cmd/config"
@@ -234,14 +233,11 @@ func (rb *RepoOrders) ReadAccruals(ctx context.Context, userID int64) (float64, 
 	var totalSum float64
 
 	err := db.QueryRowContext(ctx,
-		`SELECT SUM(accrual)
+		`SELECT COALESCE(SUM(accrual), 0.0)::float
 		 FROM orders
 		 WHERE user_id = $1`,
 		userID).Scan(&totalSum)
 	if err != nil {
-
-		log.Printf("userID: %v\n", userID)
-
 		return 0, err
 	}
 	return totalSum, nil
