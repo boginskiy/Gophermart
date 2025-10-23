@@ -22,7 +22,7 @@ func NewWithdrawalsSrv(c *CoreSrv, repo repo.RepoLoyaltyOrdersTber) *Withdrawals
 }
 
 func (w *WithdrawalsSrv) GetWithdrawalHistory(req *http.Request) ([]byte, error) {
-	userID := w.Core.takeParamFromAuth(req, auth.CtxUserID)
+	userID := req.Context().Value(auth.CtxUserID)
 	withdrawals, err := w.Repo.ReadDeductions(context.TODO(), userID.(int64))
 
 	if err != nil {

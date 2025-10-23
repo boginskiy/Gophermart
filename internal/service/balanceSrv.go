@@ -25,7 +25,7 @@ func NewBalanceServ(c *CoreSrv, repoOrders repo.RepoOrdersTber, repoLoyaltyOrder
 }
 
 func (bs *BalanceServ) GetBalance(req *http.Request) ([]byte, error) {
-	userID := bs.Core.takeParamFromAuth(req, auth.CtxUserID)
+	userID := req.Context().Value(auth.CtxUserID)
 
 	accruals, err := bs.RepoOrders.ReadAccruals(context.TODO(), userID.(int64))
 	if err != nil {
@@ -45,7 +45,7 @@ func (bs *BalanceServ) GetBalance(req *http.Request) ([]byte, error) {
 }
 
 func (bs *BalanceServ) GetWithdrawal(req *http.Request) ([]byte, error) {
-	userID := bs.Core.takeParamFromAuth(req, auth.CtxUserID)
+	userID := req.Context().Value(auth.CtxUserID)
 
 	// Парсим данные request
 	loyaltyOrder := mod.NewLoyaltyOrder("", 0, userID.(int64))

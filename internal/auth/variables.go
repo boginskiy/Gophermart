@@ -22,6 +22,10 @@ var (
 )
 
 // Ctx
-var CtxUserLogin string = "ctx_user_login"
-var CtxUserRole string = "ctx_user_role"
-var CtxUserID string = "ctx_user_id"
+type UserLoginKey struct{}
+type UserRoleKey struct{}
+type UserIDKey struct{}
+
+var CtxUserLogin UserLoginKey
+var CtxUserRole UserRoleKey
+var CtxUserID UserIDKey

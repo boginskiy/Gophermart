@@ -56,11 +56,15 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 	}
 
 	type tReq struct {
-		url      string
-		method   string
-		body     string
-		ctxKey   string
-		ctxValue any
+		url            string
+		method         string
+		body           string
+		ctxUserLogin   auth.UserLoginKey
+		ctxUserRole    auth.UserRoleKey
+		ctxUserID      auth.UserIDKey
+		valueUserLogin any
+		valueUserRole  any
+		valueUserID    any
 	}
 
 	tests := []struct {
@@ -75,11 +79,15 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				contentType: "application/json"},
 
 			tReq: tReq{
-				url:      "/orders",
-				method:   "POST",
-				body:     "12345678",
-				ctxKey:   auth.CtxUserLogin,
-				ctxValue: "TestMan",
+				url:            "/orders",
+				method:         "POST",
+				body:           "12345678",
+				ctxUserLogin:   auth.CtxUserLogin,
+				ctxUserRole:    auth.CtxUserRole,
+				ctxUserID:      auth.CtxUserID,
+				valueUserLogin: "TestMan",
+				valueUserRole:  "user",
+				valueUserID:    int64(1),
 			},
 		},
 		{
@@ -89,11 +97,15 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				contentType: "application/json"},
 
 			tReq: tReq{
-				url:      "/orders",
-				method:   "POST",
-				body:     "68379148",
-				ctxKey:   auth.CtxUserLogin,
-				ctxValue: "TestMan",
+				url:            "/orders",
+				method:         "POST",
+				body:           "68379148",
+				ctxUserLogin:   auth.CtxUserLogin,
+				ctxUserRole:    auth.CtxUserRole,
+				ctxUserID:      auth.CtxUserID,
+				valueUserLogin: "TestMan",
+				valueUserRole:  "user",
+				valueUserID:    int64(1),
 			},
 		},
 		{
@@ -103,11 +115,15 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				contentType: "application/json"},
 
 			tReq: tReq{
-				url:      "/orders",
-				method:   "POST",
-				body:     "68379148",
-				ctxKey:   auth.CtxUserLogin,
-				ctxValue: "TestMan2",
+				url:            "/orders",
+				method:         "POST",
+				body:           "68379148",
+				ctxUserLogin:   auth.CtxUserLogin,
+				ctxUserRole:    auth.CtxUserRole,
+				ctxUserID:      auth.CtxUserID,
+				valueUserLogin: "TestMan2",
+				valueUserRole:  "user",
+				valueUserID:    int64(2),
 			},
 		},
 		{
@@ -117,11 +133,15 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 				contentType: "application/json"},
 
 			tReq: tReq{
-				url:      "/orders",
-				method:   "POST",
-				body:     "96357934",
-				ctxKey:   auth.CtxUserID,
-				ctxValue: int64(100),
+				url:            "/orders",
+				method:         "POST",
+				body:           "96357934",
+				ctxUserLogin:   auth.CtxUserLogin,
+				ctxUserRole:    auth.CtxUserRole,
+				ctxUserID:      auth.CtxUserID,
+				valueUserLogin: "NewMan",
+				valueUserRole:  "user",
+				valueUserID:    int64(100),
 			},
 		},
 	}
@@ -133,7 +153,9 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 			req := httptest.NewRequest(tt.tReq.method, tt.tReq.url, body)
 
 			// Context
-			ctx := context.WithValue(req.Context(), tt.tReq.ctxKey, tt.tReq.ctxValue)
+			ctx := context.WithValue(req.Context(), tt.tReq.ctxUserLogin, tt.tReq.valueUserLogin)
+			ctx = context.WithValue(ctx, tt.tReq.ctxUserRole, tt.tReq.valueUserRole)
+			ctx = context.WithValue(ctx, tt.tReq.ctxUserID, tt.tReq.valueUserID)
 			req = req.WithContext(ctx)
 
 			w := httptest.NewRecorder()
@@ -157,11 +179,15 @@ func testGetUploadedOrders(t *testing.T, handler *handlers.OrdersHandlers) {
 	}
 
 	type tReq struct {
-		url      string
-		method   string
-		body     string
-		ctxKey   string
-		ctxValue any
+		url            string
+		method         string
+		body           string
+		ctxUserLogin   auth.UserLoginKey
+		ctxUserRole    auth.UserRoleKey
+		ctxUserID      auth.UserIDKey
+		valueUserLogin any
+		valueUserRole  any
+		valueUserID    any
 	}
 
 	tests := []struct {
@@ -176,12 +202,18 @@ func testGetUploadedOrders(t *testing.T, handler *handlers.OrdersHandlers) {
 				contentType: "application/json"},
 
 			tReq: tReq{
-				url:      "/orders",
-				method:   "GET",
-				body:     "96357934",
-				ctxKey:   auth.CtxUserID,
-				ctxValue: int64(2)},
+				url:            "/orders",
+				method:         "GET",
+				body:           "96357934",
+				ctxUserLogin:   auth.CtxUserLogin,
+				ctxUserRole:    auth.CtxUserRole,
+				ctxUserID:      auth.CtxUserID,
+				valueUserLogin: "TestMan2",
+				valueUserRole:  "user",
+				valueUserID:    int64(2),
+			},
 		},
+
 		{
 			name: "there are orders",
 			tRes: tRes{
@@ -189,11 +221,16 @@ func testGetUploadedOrders(t *testing.T, handler *handlers.OrdersHandlers) {
 				contentType: "application/json"},
 
 			tReq: tReq{
-				url:      "/orders",
-				method:   "GET",
-				body:     "96357934",
-				ctxKey:   auth.CtxUserID,
-				ctxValue: int64(1)},
+				url:            "/orders",
+				method:         "GET",
+				body:           "96357934",
+				ctxUserLogin:   auth.CtxUserLogin,
+				ctxUserRole:    auth.CtxUserRole,
+				ctxUserID:      auth.CtxUserID,
+				valueUserLogin: "TestMan",
+				valueUserRole:  "user",
+				valueUserID:    int64(1),
+			},
 		},
 	}
 
@@ -203,7 +240,9 @@ func testGetUploadedOrders(t *testing.T, handler *handlers.OrdersHandlers) {
 			req := httptest.NewRequest(tt.tReq.method, tt.tReq.url, nil)
 
 			// Context
-			ctx := context.WithValue(req.Context(), tt.tReq.ctxKey, tt.tReq.ctxValue)
+			ctx := context.WithValue(req.Context(), tt.tReq.ctxUserLogin, tt.tReq.valueUserLogin)
+			ctx = context.WithValue(ctx, tt.tReq.ctxUserRole, tt.tReq.valueUserRole)
+			ctx = context.WithValue(ctx, tt.tReq.ctxUserID, tt.tReq.valueUserID)
 			req = req.WithContext(ctx)
 
 			w := httptest.NewRecorder()

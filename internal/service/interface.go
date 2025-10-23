@@ -5,10 +5,6 @@ import (
 	"net/http"
 )
 
-type CoreSrvcer interface {
-	takeParamFromAuth(req *http.Request, p string) any
-}
-
 type OrderSrvcer interface {
 	UploadOrder(r *http.Request) ([]byte, error)
 	GetOrders(r *http.Request) ([]byte, error)

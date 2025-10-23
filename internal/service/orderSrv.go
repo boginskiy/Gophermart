@@ -56,7 +56,7 @@ func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 
 	// Запись с таким orderCode уже есть в БД
 	if err == nil {
-		loginReq := o.Core.takeParamFromAuth(req, auth.CtxUserLogin)
+		loginReq := req.Context().Value(auth.CtxUserLogin)
 		loginDB := userOrder.Login
 
 		if loginReq.(string) != loginDB {
@@ -69,7 +69,7 @@ func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 	}
 
 	// Создаем новую запись с заказом. Сохраняем в БД
-	userID := o.Core.takeParamFromAuth(req, auth.CtxUserID)
+	userID := req.Context().Value(auth.CtxUserID)
 	newOrder := mod.NewOrder(orderCode, userID.(int64))
 
 	_, err = o.Repo.Create(context.TODO(), newOrder)
@@ -84,7 +84,7 @@ func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 }
 
 func (o *OrderSrv) GetOrders(req *http.Request) ([]byte, error) {
-	userID := o.Core.takeParamFromAuth(req, auth.CtxUserID)
+	userID := req.Context().Value(auth.CtxUserID)
 	orders, err := o.Repo.ReadOrdersWithSort(context.TODO(), userID.(int64))
 
 	if err != nil {

@@ -1,8 +1,6 @@
 package service
 
 import (
-	"net/http"
-
 	"github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 )
@@ -19,8 +17,4 @@ func NewCoreSrv(a config.Argser, l logg.Logger, orderCheck OrderChecker) *CoreSr
 		Logg:       l,
 		OrderCheck: orderCheck,
 	}
-}
-
-func (cs *CoreSrv) takeParamFromAuth(req *http.Request, p string) any {
-	return req.Context().Value(p)
 }
