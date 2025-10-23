@@ -88,7 +88,7 @@ func (e *ArgsENV) ParseFlags() {
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_SYSTEM_ADDRESS"))
 	if len(valueStr) == 0 {
-		e.AccrualAddress = "localhost:8081"
+		e.AccrualAddress = "http://localhost:8081"
 	}
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_MAX_REQUEST"))

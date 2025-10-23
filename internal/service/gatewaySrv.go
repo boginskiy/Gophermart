@@ -203,13 +203,13 @@ func (l *GatewaySrv) SendOrdersToDistantSrv(orders []*mod.Order) []*mod.Order {
 	// Массово меняем статус на "PROCESSING"
 	err := l.Repo.UpdateSetStatuses2(context.TODO(), orders)
 	if err != nil {
-		log.Println("9>>", err)
+		log.Println("pass 9>>", err)
 		l.Core.Logg.RaiseInfo("GatewaySrv>SendOrderToService: query is bad")
 	}
 
 	for _, order := range orders {
-		url := fmt.Sprintf("http://%s%s%s", l.host, l.path, order.Code)
-		log.Println("10>>", url)
+		url := fmt.Sprintf("%s%s%s", l.host, l.path, order.Code)
+		log.Println("not pass 10>>", url)
 		// Ограничитель одновременно выполняемых запросов
 		l.semaphore <- struct{}{}
 		// Отправляем запрос в обработку
