@@ -42,7 +42,7 @@ func OpenDB(args string) (*sql.DB, error) {
 
 // 		// Аргументы
 // 		statuses = append(statuses, fmt.Sprintf("WHEN $%d THEN 'PROCESSING'", idxCode))
-// 		accruals = append(accruals, fmt.Sprintf("WHEN $%d THEN CAST($%d AS INTEGER)", idxCode, idxAccrual))
+// 		accruals = append(accruals, fmt.Sprintf("WHEN $%d THEN CAST($%d AS FLOAT)", idxCode, idxAccrual))
 // 		orders = append(orders, fmt.Sprintf("$%d", idxCode))
 
 // 		// Параметры

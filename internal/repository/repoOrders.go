@@ -121,7 +121,7 @@ func (rb *RepoOrders) UpdateSetStatuses(ctx context.Context, records []*mod.Accr
 
 		// Аргументы
 		statuses = append(statuses, fmt.Sprintf("WHEN $%d THEN $%d", idxCode, idxStatus))
-		accruals = append(accruals, fmt.Sprintf("WHEN $%d THEN CAST($%d AS INTEGER)", idxCode, idxAccrual))
+		accruals = append(accruals, fmt.Sprintf("WHEN $%d THEN CAST($%d AS FLOAT)", idxCode, idxAccrual))
 		orders = append(orders, fmt.Sprintf("$%d", idxCode))
 
 		// Параметры
@@ -164,7 +164,7 @@ func (rb *RepoOrders) UpdateSetStatuses2(ctx context.Context, records []*mod.Ord
 
 		// Аргументы
 		statuses = append(statuses, fmt.Sprintf("WHEN $%d THEN 'PROCESSING'", idxCode))
-		accruals = append(accruals, fmt.Sprintf("WHEN $%d THEN CAST($%d AS INTEGER)", idxCode, idxAccrual))
+		accruals = append(accruals, fmt.Sprintf("WHEN $%d THEN CAST($%d AS FLOAT)", idxCode, idxAccrual))
 		orders = append(orders, fmt.Sprintf("$%d", idxCode))
 
 		// Параметры
