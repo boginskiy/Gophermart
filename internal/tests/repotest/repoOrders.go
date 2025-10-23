@@ -104,6 +104,6 @@ func (ru *TestRepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) 
 	return records, nil
 }
 
-func (ru *TestRepoOrders) ReadAccruals(ctx context.Context, userID int64) (int, error) {
+func (ru *TestRepoOrders) ReadAccruals(ctx context.Context, userID int64) (float64, error) {
 	return 0, nil
 }

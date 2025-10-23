@@ -20,7 +20,7 @@ func createTables(s *StoreDB) error {
 						id SERIAL PRIMARY KEY,
 						code VARCHAR(20) UNIQUE NOT NULL CHECK(code ~* '^[0-9]+$'),
 						status VARCHAR(20),
-						accrual INTEGER,
+						accrual FLOAT,
 						uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						user_id INTEGER REFERENCES users(id) ON DELETE CASCADE);`)
 	if err != nil {
@@ -37,7 +37,7 @@ func createTables(s *StoreDB) error {
 	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS loyalty_orders (
 						id SERIAL PRIMARY KEY,
 						code VARCHAR(20) UNIQUE NOT NULL CHECK(code ~* '^[0-9]+$'),
-						deduction INTEGER,
+						deduction FLOAT,
 						processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						user_id INTEGER REFERENCES users(id) ON DELETE CASCADE);`)
 	return err

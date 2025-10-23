@@ -114,13 +114,13 @@ func (l *GatewaySrv) ConsumerOrders(ctx context.Context) {
 func (l *GatewaySrv) fetchData(ctx context.Context, url string) (*mod.Accrual, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Println("4>>", err)
+		log.Println("PASS 4>>", err)
 		return nil, err
 	}
 
 	res, err := l.client.Do(req)
 	if err != nil {
-		log.Println("5>>", err)
+		log.Println("PASS 5>>", err)
 		return nil, err
 	}
 
@@ -128,14 +128,14 @@ func (l *GatewaySrv) fetchData(ctx context.Context, url string) (*mod.Accrual, e
 
 	// Обработка кодов ответа: 204, 429, 500
 	if res.StatusCode != http.StatusOK {
-		log.Println("6>>", res.StatusCode)
+		log.Println("PASS 6>>", res.StatusCode)
 		return nil, NewErrHTTP(res.StatusCode)
 	}
 
 	var accrual mod.Accrual
 	err = json.NewDecoder(res.Body).Decode(&accrual)
 	if err != nil {
-		log.Println("7>>", err)
+		log.Println("NOT PASS 7>>", err)
 		return nil, err
 	}
 	return &accrual, nil
@@ -209,7 +209,7 @@ func (l *GatewaySrv) SendOrdersToDistantSrv(orders []*mod.Order) []*mod.Order {
 
 	for _, order := range orders {
 		url := fmt.Sprintf("%s%s%s", l.host, l.path, order.Code)
-		log.Println("not pass 10>>", url)
+		log.Println("pass 10>>", url)
 		// Ограничитель одновременно выполняемых запросов
 		l.semaphore <- struct{}{}
 		// Отправляем запрос в обработку

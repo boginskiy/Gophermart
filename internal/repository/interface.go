@@ -21,7 +21,7 @@ type RepoOrdersTber interface {
 	UpdateSetStatuses(ctx context.Context, records []*mod.Accrual) error
 	UpdateSetStatuses2(ctx context.Context, records []*mod.Order) error
 	ReadOrdersWithSort(ctx context.Context, userID int64) (records []*mod.Order, err error)
-	ReadAccruals(ctx context.Context, userID int64) (int, error)
+	ReadAccruals(ctx context.Context, userID int64) (float64, error)
 }
 
 type RepoUsersTber interface {
@@ -32,6 +32,6 @@ type RepoUsersTber interface {
 type RepoLoyaltyOrdersTber interface {
 	RepoCRUDer[mod.LoyaltyOrder]
 	// Расширение CRUD интерфейса
-	TotalSumOfDeductions(ctx context.Context, userID int64) (int, error)
+	TotalSumOfDeductions(ctx context.Context, userID int64) (float64, error)
 	ReadDeductions(ctx context.Context, userID int64) (records []*mod.LoyaltyOrder, err error)
 }

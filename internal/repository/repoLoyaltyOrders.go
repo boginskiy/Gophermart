@@ -51,9 +51,9 @@ func (rl *RepoLoyaltyOrders) Delete(ctx context.Context, record *mod.LoyaltyOrde
 	return nil
 }
 
-func (rl *RepoLoyaltyOrders) TotalSumOfDeductions(ctx context.Context, userID int64) (int, error) {
+func (rl *RepoLoyaltyOrders) TotalSumOfDeductions(ctx context.Context, userID int64) (float64, error) {
 	db := rl.Store.GetDB().(*sql.DB)
-	var totalSum int
+	var totalSum float64
 
 	err := db.QueryRowContext(ctx,
 		`SELECT SUM(deduction)

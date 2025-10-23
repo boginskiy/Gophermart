@@ -6,7 +6,7 @@ type Order struct {
 	ID         int64     `json:"-"`                 // Primary kye
 	Code       string    `json:"number"`            // Уникальный номер заказа
 	Status     string    `json:"status"`            // Status заказа
-	Accrual    int       `json:"accrual,omitempty"` // Положенные бонусы
+	Accrual    float64   `json:"accrual,omitempty"` // Положенные бонусы
 	UploadedAt time.Time `json:"uploaded_at"`       // Дата время загрузки заказа
 	UserID     int64     `json:"-"`                 // Связь с заказчиком
 }
@@ -27,7 +27,7 @@ type UserOrder struct {
 }
 
 type Accrual struct {
-	Order   string `json:"order"`   // Уникальный номер заказа
-	Status  string `json:"status"`  // Статус обработки
-	Accrual int    `json:"accrual"` // начисленные бонусы
+	Order   string  `json:"order"`   // Уникальный номер заказа
+	Status  string  `json:"status"`  // Статус обработки
+	Accrual float64 `json:"accrual"` // начисленные бонусы
 }

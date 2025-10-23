@@ -78,7 +78,7 @@ func ordersHandler(w http.ResponseWriter, r *http.Request) {
 	// Выбираем статус рандом
 	accrual.Status = ChoiceStatusOrder()
 	accrual.Order = orderNumStr
-	accrual.Accrual = 999
+	accrual.Accrual = float64(999)
 
 	// Вывод в терминал
 	fmt.Fprintln(os.Stdout, accrual)
