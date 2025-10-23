@@ -98,7 +98,7 @@ func (e *ArgsENV) ParseFlags() {
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_WAITE_RESPONSE"))
 	if len(valueStr) == 0 {
-		e.AccrualWaiteRes = 1
+		e.AccrualWaiteRes = 10
 	}
 
 	valueStr = strings.TrimSpace(os.Getenv("ACCRUAL_PATH"))
