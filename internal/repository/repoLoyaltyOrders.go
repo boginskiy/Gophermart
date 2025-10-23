@@ -56,10 +56,11 @@ func (rl *RepoLoyaltyOrders) TotalSumOfDeductions(ctx context.Context, userID in
 	var totalSum float64
 
 	err := db.QueryRowContext(ctx,
-		`SELECT SUM(deduction)
+		`SELECT COALESCE(SUM(deduction), 0.0)::float
 		 FROM loyalty_orders
 		 WHERE user_id = $1`,
 		userID).Scan(&totalSum)
+
 	if err != nil {
 		return 0, err
 	}
