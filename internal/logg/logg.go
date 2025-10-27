@@ -33,7 +33,7 @@ func NewLogg(logFile string) Logger {
 	}
 }
 
-func (l *Logg) Clouse() {
+func (l *Logg) Close() {
 	l.file.Close() // Закрываем дискриптор файл
 	l.Sugar.Sync() // Гарантия, что все оставшиеся сообщения попадут в лог
 }

@@ -10,11 +10,11 @@ import (
 )
 
 type TestRepoUsers struct {
-	Store store.Dber
+	Store store.DataBase
 }
 
-func NewTestRepoUsers(dber store.Dber) *TestRepoUsers {
-	return &TestRepoUsers{Store: dber}
+func NewTestRepoUsers(dataBase store.DataBase) *TestRepoUsers {
+	return &TestRepoUsers{Store: dataBase}
 }
 
 func (ru *TestRepoUsers) CheckUnic(ctx context.Context, item any) (bool, error) {

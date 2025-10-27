@@ -4,20 +4,20 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/boginskiy/Gophermart/cmd/config"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/store"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type RepoLoyaltyOrders struct {
-	Args  config.Argser
-	Logg  logg.Logger
-	Store store.Dber
+	Config conf.Config
+	Logger logg.Logger
+	Store  store.DataBase
 }
 
-func NewRepoLoyaltyOrders(argser config.Argser, logger logg.Logger, dber store.Dber) RepoLoyaltyOrdersTber {
-	return &RepoLoyaltyOrders{Args: argser, Logg: logger, Store: dber}
+func NewRepoLoyaltyOrders(config conf.Config, logger logg.Logger, dataBase store.DataBase) RepoLoyaltyOrdersTber {
+	return &RepoLoyaltyOrders{Config: config, Logger: logger, Store: dataBase}
 }
 
 func (rl *RepoLoyaltyOrders) CheckUnic(ctx context.Context, item any) (bool, error) {
@@ -78,7 +78,7 @@ func (rl *RepoLoyaltyOrders) ReadDeductions(ctx context.Context, userID int64) (
 		userID)
 
 	if err != nil || rows.Err() != nil {
-		rl.Logg.RaiseError("RepoLoyaltyOrders>ReadDeductions>QueryContext", rows.Err())
+		rl.Logger.RaiseError("RepoLoyaltyOrders>ReadDeductions>QueryContext", rows.Err())
 		return nil, err
 	}
 
@@ -95,7 +95,7 @@ func (rl *RepoLoyaltyOrders) ReadDeductions(ctx context.Context, userID int64) (
 			&record.UserID)
 
 		if err != nil {
-			rl.Logg.RaiseInfo(err.Error())
+			rl.Logger.RaiseInfo(err.Error())
 		} else {
 			records = append(records, &record)
 		}

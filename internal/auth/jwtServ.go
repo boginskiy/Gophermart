@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/boginskiy/Gophermart/cmd/config"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -18,14 +18,14 @@ type Claims struct {
 }
 
 type JWTServ struct {
-	Args config.Argser
-	Logg logg.Logger
+	Config conf.Config
+	Logger logg.Logger
 }
 
-func NewJWTServ(argser config.Argser, logger logg.Logger) *JWTServ {
+func NewJWTServ(config conf.Config, logger logg.Logger) *JWTServ {
 	return &JWTServ{
-		Args: argser,
-		Logg: logger,
+		Config: config,
+		Logger: logger,
 	}
 }
 
@@ -34,8 +34,8 @@ func (j *JWTServ) CreateToken(login, role string, id int64) (fullToken string, e
 		Claims{
 			RegisteredClaims: jwt.RegisteredClaims{
 				// Settings of JWT
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.Args.GetTimeLiveToken())), // Токен истекает через N сек
-				NotBefore: jwt.NewNumericDate(time.Now()),                                // Токен активен с текущего момента
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.Config.GetTimeLiveToken())), // Токен истекает через N сек
+				NotBefore: jwt.NewNumericDate(time.Now()),                                  // Токен активен с текущего момента
 			},
 			Login: login,
 			Role:  role,
@@ -43,7 +43,7 @@ func (j *JWTServ) CreateToken(login, role string, id int64) (fullToken string, e
 		})
 
 	// Полный подписанный токен fullToken
-	return token.SignedString(j.Args.GetSecretKeyToken())
+	return token.SignedString(j.Config.GetSecretKeyToken())
 }
 
 func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, id int64, err error) {
@@ -53,7 +53,7 @@ func (j *JWTServ) CheckOfValidToken(fullToken string) (login, role string, id in
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return j.Args.GetSecretKeyToken(), nil
+		return j.Config.GetSecretKeyToken(), nil
 	})
 
 	// Ошибка при проверке токена

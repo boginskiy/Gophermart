@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/boginskiy/Gophermart/cmd/config"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/cmd/server"
 	"github.com/boginskiy/Gophermart/internal/auth"
 	"github.com/boginskiy/Gophermart/internal/handlers"
@@ -20,27 +20,26 @@ import (
 func TestAuthHandlers2(t *testing.T) {
 	// Инициализация
 	appLog := tests.NewTestLogg()
-	args := config.NewArgsENV(appLog)
+	config := conf.NewArgsENV(appLog)
 	infraLog := tests.NewTestLogg()
 	businessLog := tests.NewTestLogg()
 
 	storeDB := tests.NewTestDB()
 
 	// Defer
-	defer businessLog.Clouse()
-	defer infraLog.Clouse()
-	defer storeDB.Clouse()
-	defer appLog.Clouse()
+	defer businessLog.Close()
+	defer infraLog.Close()
+	defer storeDB.Close()
+	defer appLog.Close()
 
-	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
-	JWTServ := auth.NewJWTServ(args, appLog)
-	coreAh := auth.NewCoreAh(args, appLog)
+	repoUsers := repository.NewRepoUsers(config, infraLog, storeDB)
+	JWTServ := auth.NewJWTServ(config, appLog)
 
-	auth := auth.NewAuth(coreAh, JWTServ, repoUsers)
+	auth := auth.NewAuth(config, appLog, repoUsers, JWTServ)
 	resPrep := prepar.NewResPrep()
 
 	// Middleware
-	mdlWare := middleware.NewMiddleware(args, appLog, auth, resPrep)
+	mdlWare := middleware.NewMiddleware(config, appLog, auth, resPrep)
 	// Handler
 	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)
 	// Router
@@ -48,7 +47,7 @@ func TestAuthHandlers2(t *testing.T) {
 
 	router.Run(mdlWare)
 
-	// http.ListenAndServe(s.args.GetRunAddress(), router.Run(mv))
+	// http.ListenAndServe(s.config.GetRunAddress(), router.Run(mv))
 
 }
 
@@ -65,12 +64,11 @@ func TestAythHandler(t *testing.T) {
 func InitializationAuth() (*auth.Auth, *prepar.ResPrep) {
 	appLog := tests.NewTestLogg()
 	storeDB := tests.NewTestDB()
-	args := config.NewArgsENV(appLog)
+	config := conf.NewArgsENV(appLog)
 
 	repoUsers := repotest.NewTestRepoUsers(storeDB)
-	JWTServ := auth.NewJWTServ(args, appLog)
-	coreAh := auth.NewCoreAh(args, appLog)
-	auth := auth.NewAuth(coreAh, JWTServ, repoUsers)
+	JWTServ := auth.NewJWTServ(config, appLog)
+	auth := auth.NewAuth(config, appLog, repoUsers, JWTServ)
 
 	resPrep := prepar.NewResPrep()
 	return auth, resPrep
@@ -202,7 +200,7 @@ func testLoginUser(t *testing.T, handler *handlers.AuthHandlers) {
 			tReq: tReq{
 				url:    "/login",
 				method: "POST",
-				body:   `{"login":"Vasia", "password":"1234"}`},
+				body:   `{"login":"Nemo", "password":"&&&&"}`},
 		},
 
 		{

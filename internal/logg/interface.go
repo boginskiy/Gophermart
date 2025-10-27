@@ -5,5 +5,5 @@ type Logger interface {
 	RaiseFatal(msg string, err error)
 	RaisePanic(msg string, err error)
 	RaiseInfo(msg string)
-	Clouse()
+	Close()
 }

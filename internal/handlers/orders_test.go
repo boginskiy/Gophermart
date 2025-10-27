@@ -35,13 +35,12 @@ func TestOrdersHandlers(t *testing.T) {
 func InitializationOrder(chOrders chan *models.Order) (*service.OrderSrv, *prepar.ResPrep) {
 	appLog := tests.NewTestLogg()
 	storeDB := tests.NewTestDB()
-	args := config.NewArgsENV(appLog)
+	config := config.NewArgsENV(appLog)
 
 	repoOrders := repotest.NewTestRepoOrders(storeDB)
 
 	orderChecker := pkg.NewLuna()
-	coreSrv := service.NewCoreSrv(args, appLog, orderChecker)
-	orderSrv := service.NewOrderSrv(chOrders, coreSrv, repoOrders)
+	orderSrv := service.NewOrderSrv(chOrders, config, appLog, repoOrders, orderChecker)
 
 	resPrep := prepar.NewResPrep()
 

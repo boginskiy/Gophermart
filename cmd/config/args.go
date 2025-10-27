@@ -11,7 +11,7 @@ import (
 )
 
 type ArgsENV struct {
-	Logg logg.Logger
+	Logger logg.Logger
 
 	RunAddress      string `env:"RUN_ADDRESS"`            //
 	NameCookie      string `env:"NAME_COOKIE"`            //
@@ -29,7 +29,7 @@ type ArgsENV struct {
 }
 
 func NewArgsENV(logger logg.Logger) *ArgsENV {
-	args := &ArgsENV{Logg: logger}
+	args := &ArgsENV{Logger: logger}
 	args.ParseFlags()
 	return args
 }
@@ -37,7 +37,7 @@ func NewArgsENV(logger logg.Logger) *ArgsENV {
 func (e *ArgsENV) ParseFlags() {
 	err := env.Parse(e)
 	if err != nil {
-		e.Logg.RaiseError("ArgsENV>ParseFlags>Parse", err)
+		e.Logger.RaiseError("ArgsENV>ParseFlags>Parse", err)
 	}
 
 	// Default

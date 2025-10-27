@@ -7,16 +7,19 @@ import (
 	"net/http"
 	"time"
 
+	conf "github.com/boginskiy/Gophermart/cmd/config"
+	"github.com/boginskiy/Gophermart/internal/logg"
 	repos "github.com/boginskiy/Gophermart/internal/repository"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type GatewaySrv struct {
-	Repo     repos.RepoOrdersTber
-	ChOrders chan *mod.Order
-	Core     *CoreSrv
-	Ctx      context.Context
-
+	Ctx    context.Context
+	Chan   chan *mod.Order
+	Config conf.Config
+	Logger logg.Logger
+	Repo   repos.RepoOrdersTber
+	//
 	chAccruals chan *mod.Accrual
 	semaphore  chan struct{}
 	host       string
@@ -25,18 +28,25 @@ type GatewaySrv struct {
 	client     *http.Client
 }
 
-func NewGatewaySrv(ctx context.Context, chOrders chan *mod.Order, core *CoreSrv, repo repos.RepoOrdersTber) *GatewaySrv {
-	item := &GatewaySrv{
-		ChOrders: chOrders,
-		Core:     core,
-		Repo:     repo,
-		Ctx:      ctx,
+func NewGatewaySrv(
+	ctx context.Context,
+	ch chan *mod.Order,
+	config conf.Config,
+	logger logg.Logger,
+	repoOrders repos.RepoOrdersTber) *GatewaySrv {
 
-		semaphore:  make(chan struct{}, core.Args.GetAccrualMaxReq()),
-		timeWaite:  core.Args.GetAccrualWaiteRes(),
-		host:       core.Args.GetAccrualAddress(),
+	item := &GatewaySrv{
+		Ctx:    ctx,
+		Chan:   ch,
+		Config: config,
+		Logger: logger,
+		Repo:   repoOrders,
+		//
+		semaphore:  make(chan struct{}, config.GetAccrualMaxReq()),
+		timeWaite:  config.GetAccrualWaiteRes(),
+		host:       config.GetAccrualAddress(),
 		chAccruals: make(chan *mod.Accrual, SIZE),
-		path:       core.Args.GetAccrualPath(),
+		path:       config.GetAccrualPath(),
 		client:     &http.Client{},
 	}
 
@@ -50,7 +60,7 @@ func NewGatewaySrv(ctx context.Context, chOrders chan *mod.Order, core *CoreSrv,
 // ConsumerAccruals -
 func (l *GatewaySrv) ConsumerAccruals(ctx context.Context) {
 	// Каждые N-секунд осуществляем обновление статусов заказов в БД
-	ticker := time.NewTicker(l.Core.Args.GetTimeTicker())
+	ticker := time.NewTicker(l.Config.GetTimeTicker())
 	// Читаем из канала. При закрытии канала данные должны упасть в БД
 	slAccruals := make([]*mod.Accrual, 0, 10)
 
@@ -77,7 +87,7 @@ func (l *GatewaySrv) SendAccrualsToDB(accruals []*mod.Accrual) []*mod.Accrual {
 	if 0 < len(accruals) {
 		err := l.Repo.UpdateSetStatuses(context.TODO(), accruals)
 		if err != nil {
-			l.Core.Logg.RaiseInfo("GatewaySrv>SendAccrualsToDB: query is bad")
+			l.Logger.RaiseInfo("GatewaySrv>SendAccrualsToDB: query is bad")
 		} else {
 			return accruals[:0]
 		}
@@ -87,7 +97,7 @@ func (l *GatewaySrv) SendAccrualsToDB(accruals []*mod.Accrual) []*mod.Accrual {
 
 // ConsumerOrders -
 func (l *GatewaySrv) ConsumerOrders(ctx context.Context) {
-	ticker := time.NewTicker(l.Core.Args.GetTimeTicker())
+	ticker := time.NewTicker(l.Config.GetTimeTicker())
 	slOrders := make([]*mod.Order, 0, 10)
 	defer close(l.chAccruals)
 
@@ -99,7 +109,7 @@ func (l *GatewaySrv) ConsumerOrders(ctx context.Context) {
 			slOrders = l.SendOrdersToDistantSrv(slOrders)
 
 		// Обработка заявок
-		case order := <-l.ChOrders:
+		case order := <-l.Chan:
 			slOrders = append(slOrders, order)
 
 		// Данные, которые останутся в канале или временном хранилище
@@ -146,23 +156,23 @@ func (l *GatewaySrv) procesData(order *mod.Order, accrual *mod.Accrual, err erro
 		//    StatusCode 500 — внутренняя ошибка сервера
 		// то передаем заявку повторно в очередь обработки
 
-		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData1", err)
-		l.ChOrders <- order
+		l.Logger.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData1", err)
+		l.Chan <- order
 		return
 	}
 
 	// Внутренние ошибки обработки
 	if err != nil || accrual == nil {
 		// Передаем заявку повторно в очередь обработки
-		l.Core.Logg.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData2", err)
-		l.ChOrders <- order
+		l.Logger.RaiseError("GatewaySrv>sendOrderToDistantSrv>procesData2", err)
+		l.Chan <- order
 		return
 	}
 
 	// Заявки со статусами 'REGISTERED', 'PROCESSING' не являются окончательными
 	// их отправляем на повторную обработку
 	if accrual.Status == "REGISTERED" || accrual.Status == "PROCESSING" {
-		l.ChOrders <- order
+		l.Chan <- order
 		return
 	}
 
@@ -196,7 +206,7 @@ func (l *GatewaySrv) SendOrdersToDistantSrv(orders []*mod.Order) []*mod.Order {
 	// Массово меняем статус на "PROCESSING"
 	err := l.Repo.UpdateSetStatuses2(context.TODO(), orders)
 	if err != nil {
-		l.Core.Logg.RaiseInfo("GatewaySrv>SendOrderToService: query is bad")
+		l.Logger.RaiseInfo("GatewaySrv>SendOrderToService: query is bad")
 	}
 
 	for _, order := range orders {

@@ -10,13 +10,13 @@ import (
 
 type Route struct {
 	R                   *chi.Mux
-	AuthHandlers        handlers.Hdlrser
-	OrdersHandlers      handlers.Hdlrser
-	BalanceHandlers     handlers.Hdlrser
-	WithdrawalsHandlers handlers.Hdlrser
+	AuthHandlers        handlers.Handler
+	OrdersHandlers      handlers.Handler
+	BalanceHandlers     handlers.Handler
+	WithdrawalsHandlers handlers.Handler
 }
 
-func NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs handlers.Hdlrser) *Route {
+func NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs handlers.Handler) *Route {
 	return &Route{
 		R:                   chi.NewRouter(),
 		AuthHandlers:        authHdlrs,

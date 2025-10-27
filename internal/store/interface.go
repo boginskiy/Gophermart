@@ -1,8 +1,8 @@
 package store
 
-type Dber interface {
+type DataBase interface {
 	Open()
-	Clouse()
+	Close()
 	Ping()
 	GetDB() any
 }

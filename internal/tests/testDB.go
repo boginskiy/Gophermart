@@ -30,7 +30,7 @@ func NewTestDB() *TestDB {
 func (tDB *TestDB) Open() {
 }
 
-func (tDB *TestDB) Clouse() {
+func (tDB *TestDB) Close() {
 }
 
 func (tDB *TestDB) Ping() {

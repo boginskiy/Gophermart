@@ -19,5 +19,5 @@ func (tl *TestLogg) RaisePanic(msg string, err error) {
 func (tl *TestLogg) RaiseInfo(msg string) {
 }
 
-func (tl *TestLogg) Clouse() {
+func (tl *TestLogg) Close() {
 }

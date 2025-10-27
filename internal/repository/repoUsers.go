@@ -4,20 +4,20 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/boginskiy/Gophermart/cmd/config"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/store"
 	"github.com/boginskiy/Gophermart/models"
 )
 
 type RepoUsers struct {
-	Args  config.Argser
-	Logg  logg.Logger
-	Store store.Dber
+	Config conf.Config
+	Logger logg.Logger
+	Store  store.DataBase
 }
 
-func NewRepoUsers(argser config.Argser, logger logg.Logger, dber store.Dber) RepoUsersTber {
-	return &RepoUsers{Args: argser, Logg: logger, Store: dber}
+func NewRepoUsers(config conf.Config, logger logg.Logger, dataBase store.DataBase) RepoUsersTber {
+	return &RepoUsers{Config: config, Logger: logger, Store: dataBase}
 }
 
 func (ru *RepoUsers) CheckUnic(ctx context.Context, item any) (bool, error) {

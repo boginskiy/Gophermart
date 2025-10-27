@@ -9,41 +9,41 @@ import (
 )
 
 type StoreDB struct {
-	Args   config.Argser
-	Logg   logg.Logger
+	Config config.Config
+	Logger logg.Logger
 	db     *sql.DB
 	isOpen bool
 }
 
-func NewStoreDB(argser config.Argser, logger logg.Logger) *StoreDB {
-	tmpStoreDB := &StoreDB{Args: argser, Logg: logger, isOpen: false}
+func NewStoreDB(config config.Config, logger logg.Logger) *StoreDB {
+	tmpStoreDB := &StoreDB{Config: config, Logger: logger, isOpen: false}
 	tmpStoreDB.Open()
 	tmpStoreDB.Ping()
 
 	err := createTables(tmpStoreDB)
 	if err != nil {
-		tmpStoreDB.Logg.RaiseFatal("NewStoreDB>createTables", err)
+		tmpStoreDB.Logger.RaiseFatal("NewStoreDB>createTables", err)
 	}
 	return tmpStoreDB
 }
 
 func (s *StoreDB) Open() {
-	db, err := sql.Open("postgres", s.Args.GetDBURI())
+	db, err := sql.Open("postgres", s.Config.GetDBURI())
 	if err != nil {
-		s.Logg.RaiseFatal("StoreDB>NewDB>Open", err)
+		s.Logger.RaiseFatal("StoreDB>NewDB>Open", err)
 	}
 	s.db = db
 	s.isOpen = true
 }
 
-func (s *StoreDB) Clouse() {
+func (s *StoreDB) Close() {
 	s.db.Close()
 }
 
 func (s *StoreDB) Ping() {
 	err := s.db.Ping()
 	if err != nil {
-		s.Logg.RaiseFatal("StoreDB>Ping", err)
+		s.Logger.RaiseFatal("StoreDB>Ping", err)
 	}
 }
 

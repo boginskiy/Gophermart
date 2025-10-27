@@ -11,21 +11,21 @@ import (
 )
 
 type Middleware struct {
-	Args    config.Argser
+	Config  config.Config
 	Auth    auth.Auther
-	Logg    logg.Logger
+	Logger  logg.Logger
 	ResPrep prepar.ResPreper
 }
 
 func NewMiddleware(
-	argser config.Argser,
+	config config.Config,
 	logger logg.Logger,
 	auther auth.Auther,
 	resPreper prepar.ResPreper) *Middleware {
 
 	return &Middleware{
-		Args:    argser,
-		Logg:    logger,
+		Config:  config,
+		Logger:  logger,
 		Auth:    auther,
 		ResPrep: resPreper}
 }
@@ -41,7 +41,7 @@ func (m *Middleware) WithAuth(next http.Handler) http.Handler {
 		}
 
 		// Этап 2. Аутентификация пользователя
-		cookie, err := r.Cookie(m.Args.GetNameCookie())
+		cookie, err := r.Cookie(m.Config.GetNameCookie())
 
 		// Отсутствуют Cookie. Отправляем сообщение о необходимости регистрации/авторизации
 		if err != nil {

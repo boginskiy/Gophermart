@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/boginskiy/Gophermart/cmd/config"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/logg"
 	"github.com/boginskiy/Gophermart/internal/store"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type RepoOrders struct {
-	Args  config.Argser
-	Logg  logg.Logger
-	Store store.Dber
+	Config conf.Config
+	Logger logg.Logger
+	Store  store.DataBase
 }
 
-func NewRepoOrders(argser config.Argser, logger logg.Logger, dber store.Dber) RepoOrdersTber {
-	return &RepoOrders{Args: argser, Logg: logger, Store: dber}
+func NewRepoOrders(config conf.Config, logger logg.Logger, dataBase store.DataBase) RepoOrdersTber {
+	return &RepoOrders{Config: config, Logger: logger, Store: dataBase}
 }
 
 func (rb *RepoOrders) CheckUnic(ctx context.Context, item any) (bool, error) {
@@ -142,7 +142,7 @@ func (rb *RepoOrders) UpdateSetStatuses(ctx context.Context, records []*mod.Accr
 
 	_, err := db.ExecContext(context.TODO(), query, args...)
 	if err != nil {
-		rb.Logg.RaiseError("RepoOrders>UpdateSetStatuses>ExecContext", err)
+		rb.Logger.RaiseError("RepoOrders>UpdateSetStatuses>ExecContext", err)
 	}
 
 	return err
@@ -185,7 +185,7 @@ func (rb *RepoOrders) UpdateSetStatuses2(ctx context.Context, records []*mod.Ord
 
 	_, err := db.ExecContext(context.TODO(), query, args...)
 	if err != nil {
-		rb.Logg.RaiseError("RepoOrders>UpdateSetStatuses>ExecContext", err)
+		rb.Logger.RaiseError("RepoOrders>UpdateSetStatuses>ExecContext", err)
 	}
 
 	return err
@@ -202,7 +202,7 @@ func (rb *RepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) (rec
 		userID)
 
 	if err != nil || rows.Err() != nil {
-		rb.Logg.RaiseError("RepoOrders>ReadOrdersWithSort>QueryContext", rows.Err())
+		rb.Logger.RaiseError("RepoOrders>ReadOrdersWithSort>QueryContext", rows.Err())
 		return nil, err
 	}
 
@@ -220,7 +220,7 @@ func (rb *RepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) (rec
 			&record.UserID)
 
 		if err != nil {
-			rb.Logg.RaiseInfo(err.Error())
+			rb.Logger.RaiseInfo(err.Error())
 		} else {
 			records = append(records, &record)
 		}

@@ -5,22 +5,34 @@ import (
 	"encoding/json"
 	"net/http"
 
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/auth"
+	"github.com/boginskiy/Gophermart/internal/logg"
 	repo "github.com/boginskiy/Gophermart/internal/repository"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type BalanceServ struct {
-	Core              *CoreSrv
+	Config            conf.Config
+	Logger            logg.Logger
 	RepoOrders        repo.RepoOrdersTber
 	RepoLoyaltyOrders repo.RepoLoyaltyOrdersTber
+	OrderCheck        OrderChecker
 }
 
-func NewBalanceServ(c *CoreSrv, repoOrders repo.RepoOrdersTber, repoLoyaltyOrders repo.RepoLoyaltyOrdersTber) *BalanceServ {
+func NewBalanceServ(
+	config conf.Config,
+	logger logg.Logger,
+	repoOrders repo.RepoOrdersTber,
+	repoLoyaltyOrders repo.RepoLoyaltyOrdersTber,
+	orderCheck OrderChecker) *BalanceServ {
+
 	return &BalanceServ{
-		Core:              c,
+		Config:            config,
+		Logger:            logger,
 		RepoOrders:        repoOrders,
 		RepoLoyaltyOrders: repoLoyaltyOrders,
+		OrderCheck:        orderCheck,
 	}
 }
 
@@ -56,7 +68,7 @@ func (bs *BalanceServ) GetWithdrawal(req *http.Request) ([]byte, error) {
 	}
 
 	// Проверка номера заказа алгоритмом Luna
-	if !bs.Core.OrderCheck.CheckDigits(loyaltyOrder.Code) {
+	if !bs.OrderCheck.CheckDigits(loyaltyOrder.Code) {
 		return nil, ErrOrderNumber
 	}
 

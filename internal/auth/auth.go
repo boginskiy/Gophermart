@@ -3,26 +3,72 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"strings"
 
-	"github.com/boginskiy/Gophermart/internal/repository"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
+	"github.com/boginskiy/Gophermart/internal/logg"
+	repo "github.com/boginskiy/Gophermart/internal/repository"
 	"github.com/boginskiy/Gophermart/models"
 	"github.com/boginskiy/Gophermart/pkg"
 )
 
 type Auth struct {
-	Repo    repository.RepoUsersTber
+	Config  conf.Config
+	Logger  logg.Logger
+	Repo    repo.RepoUsersTber
 	JWTServ JWTokener
-	Core    *CoreAh
 }
 
-func NewAuth(core *CoreAh, jwter JWTokener, repoUsers repository.RepoUsersTber) *Auth {
+func NewAuth(config conf.Config, logger logg.Logger, repoUsers repo.RepoUsersTber, jwter JWTokener) *Auth {
 	return &Auth{
+		Config:  config,
+		Logger:  logger,
 		Repo:    repoUsers,
 		JWTServ: jwter,
-		Core:    core,
 	}
+}
+
+func (u *Auth) createCookie(token, name string) *http.Cookie {
+	return &http.Cookie{
+		Name:     name,
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,                         // Доступ только серверу, увеличивает безопасность
+		SameSite: http.SameSiteStrictMode,      // Запрещает отправлять куки с другого домена
+		MaxAge:   u.Config.GetTimeLiveCookie(), // Жива N секунд
+		Secure:   false,                        // Поставьте true, если работаете через HTTPS
+	}
+}
+
+func (u *Auth) takeLoginAndPassword(req *http.Request) (login, password string, err error) {
+	// Читаем body req
+	dataByte, err := io.ReadAll(req.Body)
+
+	defer req.Body.Close()
+	if err != nil {
+		u.Logger.RaiseError("Auth>takeLoginAndPassword>ReadAll", err)
+		return "", "", err
+	}
+
+	// Парсинг данных
+	var overallStruct = make(map[string]any)
+	err = json.Unmarshal(dataByte, &overallStruct)
+	if err != nil {
+		u.Logger.RaiseError("Auth>takeLoginAndPassword>Unmarshal", err)
+		return "", "", ErrLoginPasswordIsBad
+	}
+
+	// Достаем login, password
+	if login, ok := overallStruct["login"].(string); ok {
+		if password, ok2 := overallStruct["password"].(string); ok2 {
+			return login, password, nil
+		}
+	}
+
+	u.Logger.RaiseInfo("Auth>takeLoginAndPassword>data not found")
+	return "", "", ErrLoginPasswordIsBad
 }
 
 func (u *Auth) CheckToken(token string) (login, role string, id int64, err error) {
@@ -41,7 +87,7 @@ func (u *Auth) CheckAuthReq(req *http.Request) bool {
 
 func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	// Достаем login, password
-	login, password, err := u.Core.takeLoginAndPassword(req)
+	login, password, err := u.takeLoginAndPassword(req)
 	if err != nil {
 		return nil, nil, ErrLoginPasswordIsBad
 	}
@@ -50,38 +96,38 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 	loginIsUnic, _ := u.Repo.CheckUnic(context.TODO(), login)
 	if !loginIsUnic {
 		// Пользователь не уникален, логин уже занят
-		u.Core.Logg.RaiseInfo(ErrLoginNotUnic.Error())
+		u.Logger.RaiseInfo(ErrLoginNotUnic.Error())
 		return nil, nil, ErrLoginNotUnic
 	}
 
 	// Создаем нового пользователя
 	newUser, err := models.NewUser(login, password)
 	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Registration>NewUser", err)
+		u.Logger.RaiseError("Auth>Registration>NewUser", err)
 		return nil, nil, ErrCreateUser
 	}
 
 	// Запись нового пользователя в БД
 	newUserID, err := u.Repo.Create(context.TODO(), newUser)
 	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Registration>Create", err)
+		u.Logger.RaiseError("Auth>Registration>Create", err)
 		return nil, nil, ErrCreateUser
 	}
 
 	// Создаем токен по логину
 	token, err := u.JWTServ.CreateToken(newUser.Login, newUser.Role, newUserID)
 	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Registration>CreateToken", err)
+		u.Logger.RaiseError("Auth>Registration>CreateToken", err)
 		return nil, nil, ErrCreateUser
 	}
 
 	// Создаем Cookie
-	cookie := u.Core.createCookie(token, u.Core.Args.GetNameCookie())
+	cookie := u.createCookie(token, u.Config.GetNameCookie())
 
 	// Формируем ответ
 	userByte, err := json.Marshal(newUser)
 	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Registration>Marshal", err)
+		u.Logger.RaiseError("Auth>Registration>Marshal", err)
 		return nil, nil, ErrCreateUser
 	}
 
@@ -90,7 +136,7 @@ func (u *Auth) Registration(req *http.Request) ([]byte, *http.Cookie, error) {
 
 func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 	// Достаем login, password
-	login, password, err := u.Core.takeLoginAndPassword(req)
+	login, password, err := u.takeLoginAndPassword(req)
 	if err != nil {
 		return nil, nil, ErrLoginPasswordIsBad2
 	}
@@ -109,9 +155,9 @@ func (u *Auth) Authentication(req *http.Request) ([]byte, *http.Cookie, error) {
 	// Выдаем новый токен
 	token, err := u.JWTServ.CreateToken(user.Login, user.Role, user.ID)
 	if err != nil {
-		u.Core.Logg.RaiseError("Auth>Authentication>CreateToken", err)
+		u.Logger.RaiseError("Auth>Authentication>CreateToken", err)
 		return nil, nil, err
 	}
 
-	return MessWelcome, u.Core.createCookie(token, u.Core.Args.GetNameCookie()), nil
+	return MessWelcome, u.createCookie(token, u.Config.GetNameCookie()), nil
 }

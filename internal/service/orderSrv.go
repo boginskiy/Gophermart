@@ -6,29 +6,40 @@ import (
 	"io"
 	"net/http"
 
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/auth"
+	"github.com/boginskiy/Gophermart/internal/logg"
 	repo "github.com/boginskiy/Gophermart/internal/repository"
 	mod "github.com/boginskiy/Gophermart/models"
 )
 
 type OrderSrv struct {
-	ChOrders chan *mod.Order
-	Core     *CoreSrv
-	Repo     repo.RepoOrdersTber
+	Chan       chan *mod.Order
+	Config     conf.Config
+	Logger     logg.Logger
+	Repo       repo.RepoOrdersTber
+	OrderCheck OrderChecker
 }
 
-func NewOrderSrv(chOrders chan *mod.Order, c *CoreSrv, r repo.RepoOrdersTber) *OrderSrv {
+func NewOrderSrv(
+	ch chan *mod.Order,
+	config conf.Config,
+	logger logg.Logger,
+	repoOrders repo.RepoOrdersTber,
+	orderCheck OrderChecker) *OrderSrv {
+
 	return &OrderSrv{
-		ChOrders: chOrders,
-		Core:     c,
-		Repo:     r,
-	}
+		Chan:       ch,
+		Config:     config,
+		Logger:     logger,
+		Repo:       repoOrders,
+		OrderCheck: orderCheck}
 }
 
 // sendOrdersToGateWay - метод для отправки заказов в сервис 'GateWay'
 func (o *OrderSrv) sendOrdersToGateWay(order *mod.Order) []byte {
 	select {
-	case o.ChOrders <- order:
+	case o.Chan <- order:
 		return MessNewOrder
 	default:
 		// Если переполнение очереди заказов, сообщаем, что сервис перегружен
@@ -47,7 +58,7 @@ func (o *OrderSrv) UploadOrder(req *http.Request) ([]byte, error) {
 	orderCode := string(dataByte)
 
 	// Проверка номера заказа алгоритмом 'Луна'
-	if !o.Core.OrderCheck.CheckDigits(orderCode) {
+	if !o.OrderCheck.CheckDigits(orderCode) {
 		return nil, ErrOrderNumber
 	}
 

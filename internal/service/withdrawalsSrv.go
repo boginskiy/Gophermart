@@ -5,19 +5,23 @@ import (
 	"encoding/json"
 	"net/http"
 
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/auth"
+	"github.com/boginskiy/Gophermart/internal/logg"
 	repo "github.com/boginskiy/Gophermart/internal/repository"
 )
 
 type WithdrawalsSrv struct {
-	Core *CoreSrv
-	Repo repo.RepoLoyaltyOrdersTber
+	Config conf.Config
+	Logger logg.Logger
+	Repo   repo.RepoLoyaltyOrdersTber
 }
 
-func NewWithdrawalsSrv(c *CoreSrv, repo repo.RepoLoyaltyOrdersTber) *WithdrawalsSrv {
+func NewWithdrawalsSrv(config conf.Config, logger logg.Logger, repoRepoLoyaltyOrders repo.RepoLoyaltyOrdersTber) *WithdrawalsSrv {
 	return &WithdrawalsSrv{
-		Core: c,
-		Repo: repo,
+		Config: config,
+		Logger: logger,
+		Repo:   repoRepoLoyaltyOrders,
 	}
 }
 

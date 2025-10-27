@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 
-	"github.com/boginskiy/Gophermart/cmd/config"
+	conf "github.com/boginskiy/Gophermart/cmd/config"
 	"github.com/boginskiy/Gophermart/internal/auth"
 	"github.com/boginskiy/Gophermart/internal/handlers"
 	"github.com/boginskiy/Gophermart/internal/logg"
@@ -17,21 +17,20 @@ import (
 )
 
 func Start(
-	args config.Argser,
+	config conf.Config,
 	appLog logg.Logger,
 	infraLog logg.Logger,
 	businessLog logg.Logger,
-	storeDB store.Dber) {
+	storeDB store.DataBase) {
 
 	// Repository
-	repoLoyaltyOrders := repository.NewRepoLoyaltyOrders(args, infraLog, storeDB)
-	repoOrders := repository.NewRepoOrders(args, infraLog, storeDB)
-	repoUsers := repository.NewRepoUsers(args, infraLog, storeDB)
+	repoLoyaltyOrders := repository.NewRepoLoyaltyOrders(config, infraLog, storeDB)
+	repoOrders := repository.NewRepoOrders(config, infraLog, storeDB)
+	repoUsers := repository.NewRepoUsers(config, infraLog, storeDB)
 
 	// Authentification
-	JWTServ := auth.NewJWTServ(args, appLog)
-	coreAh := auth.NewCoreAh(args, appLog)
-	auth := auth.NewAuth(coreAh, JWTServ, repoUsers)
+	JWTServ := auth.NewJWTServ(config, appLog)
+	auth := auth.NewAuth(config, appLog, repoUsers, JWTServ)
 
 	// Preparation
 	resPrep := prepar.NewResPrep()
@@ -43,12 +42,11 @@ func Start(
 	defer close(chOrders)
 
 	// Services
-	orderChecker := pkg.NewLuna()                                                // orderChecker - сервис  проверки номера заказа
-	coreSrv := service.NewCoreSrv(args, businessLog, orderChecker)               // coreSrv - сервис с базовым функционалом
-	orderSrv := service.NewOrderSrv(chOrders, coreSrv, repoOrders)               // orderSrv - сервис обработки заявок по расчету
-	balanceSrv := service.NewBalanceServ(coreSrv, repoOrders, repoLoyaltyOrders) // balanceSrv - сервис обработки бонусов
-	withdrawalsSrv := service.NewWithdrawalsSrv(coreSrv, repoLoyaltyOrders)      // withdrawalsSrv - сервис обработки использованных бонусов
-	service.NewGatewaySrv(ctx, chOrders, coreSrv, repoOrders)                    // gatewaySrv - сервис прокси для расчета бонусов
+	orderChecker := pkg.NewLuna()                                                                          // orderChecker - сервис  проверки номера заказа
+	orderSrv := service.NewOrderSrv(chOrders, config, businessLog, repoOrders, orderChecker)               // orderSrv - сервис обработки заявок по расчету
+	balanceSrv := service.NewBalanceServ(config, businessLog, repoOrders, repoLoyaltyOrders, orderChecker) // balanceSrv - сервис обработки бонусов
+	withdrawalsSrv := service.NewWithdrawalsSrv(config, businessLog, repoLoyaltyOrders)                    // withdrawalsSrv - сервис обработки использованных бонусов
+	service.NewGatewaySrv(ctx, chOrders, config, businessLog, repoOrders)                                  // gatewaySrv - сервис прокси для расчета бонусов
 
 	// Handlers
 	withdrawalsHdlrs := handlers.NewWithdrawalsHandlers(withdrawalsSrv, resPrep)
@@ -57,13 +55,13 @@ func Start(
 	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)
 
 	// Middleware
-	mdlWare := middleware.NewMiddleware(args, appLog, auth, resPrep)
+	mdlWare := middleware.NewMiddleware(config, appLog, auth, resPrep)
 
 	// Router
 	router := NewRoute(authHdlrs, orderHdlrs, balanceHdlrs, withdrawalsHdlrs)
 
 	// Start server
-	NewServer(args, appLog).Run(router, mdlWare)
+	NewServer(config, appLog).Run(router, mdlWare)
 
 }
 

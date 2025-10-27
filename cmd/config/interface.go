@@ -4,24 +4,18 @@ import (
 	"time"
 )
 
-type Argser interface {
-	// Server
-	GetRunAddress() string
-	// Cookie
+type Config interface {
+	GetRunAddress() string  // Server
+	GetTimeLiveCookie() int // Cookie
 	GetNameCookie() string
-	GetTimeLiveCookie() int
-	// Token
-	GetTimeLiveToken() time.Duration
+	GetTimeLiveToken() time.Duration // Token
 	GetSecretKeyToken() []byte
-	// Logger
-	GetBusinessLog() string
+	GetBusinessLog() string // Logger
 	GetInfraLog() string
-	// DB
-	GetDBURI() string
-	// BonusCalc
-	GetAccrualAddress() string
-	GetAccrualMaxReq() int
-	GetAccrualWaiteRes() time.Duration
-	GetAccrualPath() string
+	GetDBURI() string                  // DB
+	GetAccrualWaiteRes() time.Duration // BonusCalc
 	GetTimeTicker() time.Duration
+	GetAccrualAddress() string
+	GetAccrualPath() string
+	GetAccrualMaxReq() int
 }
