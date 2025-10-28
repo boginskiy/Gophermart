@@ -105,5 +105,15 @@ func (ru *TestRepoOrders) ReadOrdersWithSort(ctx context.Context, userID int64) 
 }
 
 func (ru *TestRepoOrders) ReadAccruals(ctx context.Context, userID int64) (float64, error) {
-	return 0, nil
+	db := ru.Store.GetDB().(map[string]any)
+	var totalSum float64
+
+	for _, v := range db {
+		if order, ok := v.(*models.Order); ok {
+			if order.UserID == userID {
+				totalSum += order.Accrual
+			}
+		}
+	}
+	return totalSum, nil
 }

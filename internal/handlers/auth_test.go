@@ -6,50 +6,13 @@ import (
 	"testing"
 
 	conf "github.com/boginskiy/Gophermart/cmd/config"
-	"github.com/boginskiy/Gophermart/cmd/server"
 	"github.com/boginskiy/Gophermart/internal/auth"
 	"github.com/boginskiy/Gophermart/internal/handlers"
-	"github.com/boginskiy/Gophermart/internal/middleware"
 	"github.com/boginskiy/Gophermart/internal/prepar"
-	"github.com/boginskiy/Gophermart/internal/repository"
 	"github.com/boginskiy/Gophermart/internal/tests"
 	"github.com/boginskiy/Gophermart/internal/tests/repotest"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestAuthHandlers2(t *testing.T) {
-	// Инициализация
-	appLog := tests.NewTestLogg()
-	config := conf.NewArgsENV(appLog)
-	infraLog := tests.NewTestLogg()
-	businessLog := tests.NewTestLogg()
-
-	storeDB := tests.NewTestDB()
-
-	// Defer
-	defer businessLog.Close()
-	defer infraLog.Close()
-	defer storeDB.Close()
-	defer appLog.Close()
-
-	repoUsers := repository.NewRepoUsers(config, infraLog, storeDB)
-	JWTServ := auth.NewJWTServ(config, appLog)
-
-	auth := auth.NewAuth(config, appLog, repoUsers, JWTServ)
-	resPrep := prepar.NewResPrep()
-
-	// Middleware
-	mdlWare := middleware.NewMiddleware(config, appLog, auth, resPrep)
-	// Handler
-	authHdlrs := handlers.NewAuthHandlers(auth, resPrep)
-	// Router
-	router := server.NewRoute(authHdlrs, tests.NewTestHandlers(), tests.NewTestHandlers(), tests.NewTestHandlers())
-
-	router.Run(mdlWare)
-
-	// http.ListenAndServe(s.config.GetRunAddress(), router.Run(mv))
-
-}
 
 func TestAythHandler(t *testing.T) {
 	// Handler
@@ -204,7 +167,7 @@ func testLoginUser(t *testing.T, handler *handlers.AuthHandlers) {
 		},
 
 		{
-			name: "reqistration data not valid ",
+			name: "reqistration data not valid",
 			tRes: tRes{
 				code:        401,
 				contentType: "application/json"},

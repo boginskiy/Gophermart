@@ -4,10 +4,10 @@ import "time"
 
 type LoyaltyOrder struct {
 	ID          int64     `json:"-"`
-	Code        string    `json:"order"`         // Уникальный номер заказа
-	Deduction   float64   `json:"sum,omitempty"` // Списанные бонусы в счет текущего заказа
-	ProcessedAt time.Time `json:"processed_at"`  // Дата время загрузки заказа
-	UserID      int64     `json:"-"`             // Связь с заказчиком
+	Code        string    `json:"order"`         // Code is Уникальный номер заказа
+	Deduction   float64   `json:"sum,omitempty"` // Deduction is Списанные бонусы в счет текущего заказа
+	ProcessedAt time.Time `json:"processed_at"`  // ProcessedAt is Дата время загрузки заказа
+	UserID      int64     `json:"-"`             // UserID is Связь с заказчиком
 }
 
 func NewLoyaltyOrder(code string, deduction float64, userID int64) *LoyaltyOrder {
