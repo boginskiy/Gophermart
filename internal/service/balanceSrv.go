@@ -61,7 +61,7 @@ func (bs *BalanceServ) GetWithdrawal(req *http.Request) ([]byte, error) {
 
 	// Парсим данные request
 	loyaltyOrder := mod.NewLoyaltyOrder("", 0, userID.(int64))
-	err := json.NewDecoder(req.Body).Decode(loyaltyOrder)
+	json.NewDecoder(req.Body).Decode(loyaltyOrder)
 
 	// Проверка номера заказа алгоритмом Luna || номер заказа не должен быть пустым
 	if !bs.OrderCheck.CheckDigits(loyaltyOrder.Code) || loyaltyOrder.Code == "" {

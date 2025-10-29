@@ -105,6 +105,7 @@ func testRegisterUser(t *testing.T, handler *handlers.AuthHandlers) {
 
 			// Response
 			res := w.Result()
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, res.Header.Get("Content-Type"), tt.tRes.contentType)
@@ -190,6 +191,7 @@ func testLoginUser(t *testing.T, handler *handlers.AuthHandlers) {
 
 			// Response
 			res := w.Result()
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, res.Header.Get("Content-Type"), tt.tRes.contentType)

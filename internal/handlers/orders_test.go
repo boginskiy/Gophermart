@@ -162,6 +162,7 @@ func testUploadOrderNumber(t *testing.T, handler *handlers.OrdersHandlers) {
 
 			// Response
 			res := w.Result()
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, res.Header.Get("Content-Type"), tt.tRes.contentType)
@@ -249,6 +250,7 @@ func testGetUploadedOrders(t *testing.T, handler *handlers.OrdersHandlers) {
 
 			// Response
 			res := w.Result()
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, res.Header.Get("Content-Type"), tt.tRes.contentType)

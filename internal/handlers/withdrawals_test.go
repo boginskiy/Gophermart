@@ -93,6 +93,7 @@ func authentication(t *testing.T, serv *httptest.Server, client1, client2 *clien
 			// Client
 			res, err := tt.client.C.Do(req)
 			assert.NoError(t, err)
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, tt.statusCodeRes, res.StatusCode)
@@ -123,6 +124,7 @@ func testGetWithdrawalHistory(t *testing.T, serv *httptest.Server, client1, clie
 			// Response
 			res, err := tt.client.C.Do(req)
 			assert.NoError(t, err)
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, tt.statusCodeRes, res.StatusCode)

@@ -102,6 +102,7 @@ func testUserAuthentication(t *testing.T, serv *httptest.Server, client *client.
 			// Client
 			res, err := client.C.Do(req)
 			assert.NoError(t, err)
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, tt.statusCodeRes, res.StatusCode)
@@ -119,6 +120,7 @@ func testGetCurrentBalance(t *testing.T, serv *httptest.Server, client *client.T
 	assert.NoError(t, err)
 	res, err := client.C.Do(req)
 	assert.NoError(t, err)
+	defer res.Body.Close()
 
 	assert.Equal(t, statusCodeRes, res.StatusCode)
 }
@@ -147,6 +149,7 @@ func testRequestWithdrawal(t *testing.T, serv *httptest.Server, client *client.T
 			// Response
 			res, err := client.C.Do(req)
 			assert.NoError(t, err)
+			defer res.Body.Close()
 
 			// Check
 			assert.Equal(t, tt.statusCodeRes, res.StatusCode)

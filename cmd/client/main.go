@@ -21,7 +21,7 @@ type TUser struct {
 func NewTUser(timeOut int, needRedirect bool) *TUser {
 	// Using or not using Redirect
 	var fR func(*http.Request, []*http.Request) error
-	if needRedirect == false {
+	if !needRedirect {
 		fR = func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		}
@@ -85,8 +85,16 @@ func (tu *TUser) PreparSendingFile(nameFile string) (body *bytes.Buffer, content
 
 func (tu *TUser) SendWithFile(url string, nameFile string) (response *http.Response, err error) {
 	body, content, err := tu.PreparSendingFile(nameFile)
+	if err != nil {
+		return nil, err
+	}
+
 	// Create request
 	req, err := http.NewRequest(http.MethodPost, url, body)
+	if err != nil {
+		return nil, err
+	}
+
 	// Add Header
 	req.Header.Set("Content-Type", content)
 	return tu.C.Do(req)
